@@ -313,7 +313,7 @@ function init(e) {
   versionBlock.style.marginTop = '10px';
   var versionInfo = document.createElement('a');
   versionInfo.appendChild(document.createTextNode(GM_info.script.name + ' (v' + GM_info.script.version + ')'));
-  versionInfo.href = 'https://www.waze.com/forum/viewforum.php?f=819';
+  versionInfo.href = 'https://greasyfork.org/scripts/29381-wme-image-overlays';
   versionInfo.target = '_blank';
   versionBlock.appendChild(versionInfo);
   tab.appendChild(versionBlock);
@@ -505,7 +505,6 @@ function init(e) {
       var aerialImageryIndex = Waze.map.getLayerIndex(Waze.map.getLayerByUniqueName('satellite_imagery'));
       Waze.map.setLayerIndex(layer, aerialImageryIndex+1);
       W.map.zoomToExtent(overlay.extent);
-      console.log('layer', layer);
     });
     img.src = url;
   }
