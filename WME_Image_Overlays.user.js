@@ -609,7 +609,6 @@ function init(e) {
     }));
     instructions.appendChild(createControlButton('plus', function() {
       layer.scale(1 + 0.05 * (11-Waze.map.getZoom()));
-      console.log(layer);
     }));
 
     Waze.map.resize();
