@@ -10,7 +10,7 @@
 // ==/UserScript==
 
 // Based on the OpenLayers.Layer.Image class
-OpenLayers.Layer.OverlayImage = OpenLayers.Class(OpenLayers.Layer, {
+OL.Layer.OverlayImage = OL.Class(OL.Layer, {
   isBaseLayer: false,
   url: null,
   extent: null,
@@ -26,7 +26,7 @@ OpenLayers.Layer.OverlayImage = OpenLayers.Class(OpenLayers.Layer, {
     this.size = size;
     this.key = key;
     this.rotation = options.rotation || 0;
-    OpenLayers.Layer.prototype.initialize.apply(this, [name, options]);
+    OL.Layer.prototype.initialize.apply(this, [name, options]);
   },
   destroy: function() {
     if (this.tile) {
@@ -34,13 +34,13 @@ OpenLayers.Layer.OverlayImage = OpenLayers.Class(OpenLayers.Layer, {
       this.tile.destroy();
       this.tile = null;
     }
-    OpenLayers.Layer.prototype.destroy.apply(this, arguments);
+    OL.Layer.prototype.destroy.apply(this, arguments);
   },
   setMap: function(map) {
-    OpenLayers.Layer.prototype.setMap.apply(this, arguments);
+    OL.Layer.prototype.setMap.apply(this, arguments);
   },
   moveTo:function(bounds, zoomChanged, dragging) {
-    OpenLayers.Layer.prototype.moveTo.apply(this, arguments);
+    OL.Layer.prototype.moveTo.apply(this, arguments);
     var firstRendering = (this.tile == null);
     if (zoomChanged || firstRendering) {
       this.setTileSize();
@@ -50,7 +50,7 @@ OpenLayers.Layer.OverlayImage = OpenLayers.Class(OpenLayers.Layer, {
       });
 
       if (firstRendering) {
-        this.tile = new OpenLayers.Tile.Image(this, ulPx, this.extent, null, this.tileSize);
+        this.tile = new OL.Tile.Image(this, ulPx, this.extent, null, this.tileSize);
         this.addTileMonitoringHooks(this.tile);
       } else {
         this.tile.size = this.tileSize.clone();
@@ -109,7 +109,7 @@ OpenLayers.Layer.OverlayImage = OpenLayers.Class(OpenLayers.Layer, {
   setTileSize: function() {
     var tileWidth = this.extent.getWidth() / this.map.getResolution();
     var tileHeight = this.extent.getHeight() / this.map.getResolution();
-    this.tileSize = new OpenLayers.Size(tileWidth, tileHeight);
+    this.tileSize = new OL.Size(tileWidth, tileHeight);
   },
   addTileMonitoringHooks: function(tile) {
     tile.onLoadStart = function() {
@@ -154,15 +154,15 @@ function init(e) {
     log('user-info element not yet available, page still loading');
     return;
   }
-  if (typeof Waze.loginManager === 'undefined') {
+  if (typeof W.loginManager === 'undefined') {
     setTimeout(init, 300);
     return;
   }
-  if (!Waze.loginManager.user) {
-    Waze.loginManager.events.register('login', null, init);
-    Waze.loginManager.events.register('loginStatus', null, init);
+  if (!W.loginManager.user) {
+    W.loginManager.events.register('login', null, init);
+    W.loginManager.events.register('loginStatus', null, init);
     // Double check as event might have triggered already
-    if (!Waze.loginManager.user) {
+    if (!W.loginManager.user) {
       return;
     }
   }
@@ -202,15 +202,15 @@ function init(e) {
 
   var tab = addTab();
   // Deal with events mode
-  if (Waze.app.modeController) {
-    Waze.app.modeController.model.bind('change:mode', function(model, modeId) {
+  if (W.app.modeController) {
+    W.app.modeController.model.bind('change:mode', function(model, modeId) {
       if (modeId == 0) {
         addTab(tab);
       }
     });
   }
 
-  if (localStorage.ImageOverlays_warning == undefined && Waze.loginManager.getUserRank() < 3) {
+  if (localStorage.ImageOverlays_warning == undefined && W.loginManager.getUserRank() < 3) {
     var warningMessage = document.createElement('div');
     warningMessage.style.position = 'absolute';
     warningMessage.style.backgroundColor = '#fff';
@@ -324,7 +324,7 @@ function init(e) {
           displayAlignPage(blob);
         } else {
           importError.classList.remove('hidden');
-          Waze.map.resize();
+          W.map.resize();
         }
         break;
       }
@@ -343,7 +343,7 @@ function init(e) {
   cancelButton.appendChild(document.createTextNode(I18n.t('image_overlays.cancel')));
   cancelButton.addEventListener('click', function() {
     panel.classList.add('hidden');
-    Waze.map.resize();
+    W.map.resize();
     removeLayer();
   });
   panel.appendChild(cancelButton);
@@ -420,7 +420,7 @@ function init(e) {
   var parentLayer = document.createElement('select');
   parentLayer.className = 'form-control';
   parentLayer.id = 'imageOverlaysParentLayer';
-  Waze.map.events.on({
+  W.map.events.on({
     addlayer: updateParentLayer,
     removelayer: updateParentLayer,
     changelayer: updateParentLayer
@@ -433,14 +433,14 @@ function init(e) {
           var overlay = e.target.result;
           overlay.layerTarget = parentLayer.value;
           objectStore.put(overlay, layer.key).addEventListener('success', function() {
-            var targetIndex = Waze.map.getLayerIndex(Waze.map.getLayersByName(parentLayer.value)[0]) + 1;
-            Waze.map.setLayerIndex(layer, targetIndex);
+            var targetIndex = W.map.getLayerIndex(W.map.getLayersByName(parentLayer.value)[0]) + 1;
+            W.map.setLayerIndex(layer, targetIndex);
           });
         });
       });
     } else if (layer) {
-      var targetIndex = Waze.map.getLayerIndex(Waze.map.getLayersByName(parentLayer.value)[0]) + 1;
-      Waze.map.setLayerIndex(layer, targetIndex);
+      var targetIndex = W.map.getLayerIndex(W.map.getLayersByName(parentLayer.value)[0]) + 1;
+      W.map.setLayerIndex(layer, targetIndex);
     }
   });
   var parentLayerLabel = document.createElement('label');
@@ -543,7 +543,7 @@ function init(e) {
     while (parentLayer.firstChild) {
       parentLayer.removeChild(parentLayer.firstChild);
     }
-    Waze.map.layers.forEach(function(layer) {
+    W.map.layers.forEach(function(layer) {
       if (layer.name != 'Image Overlay') {
         var layerOption = document.createElement('option');
         layerOption.value = layer.name;
@@ -574,7 +574,7 @@ function init(e) {
     instructions.appendChild(addImageInput);
     instructions.appendChild(importError);
     panel.classList.remove('hidden');
-    Waze.map.resize();
+    W.map.resize();
   }
 
   function displayAlignPage(blob) {
@@ -586,7 +586,7 @@ function init(e) {
 
     displayImageOverlay({
       'blob': blob,
-      'extent': Waze.map.getExtent(),
+      'extent': W.map.getExtent(),
       'rotation': 0
     }, true);
 
@@ -603,7 +603,7 @@ function init(e) {
       layer.rotate(-0.5 * scale.value/100);
     }));
     instructions.appendChild(createControlButton('arrow-up', function() {
-      layer.shift(0, 10 * Waze.map.getResolution() * scale.value/100);
+      layer.shift(0, 10 * W.map.getResolution() * scale.value/100);
     }));
     instructions.appendChild(createControlButton('rotate-right', function() {
       layer.rotate(0.5 * scale.value/100);
@@ -616,14 +616,14 @@ function init(e) {
       layer.stretch(true, 1 + (0.01 * scale.value/100));
     }, 'Stretch'))
     instructions.appendChild(createControlButton('arrow-left', function() {
-      layer.shift(-10 * Waze.map.getResolution() * scale.value/100, 0);
+      layer.shift(-10 * W.map.getResolution() * scale.value/100, 0);
     }));
     instructions.appendChild(createControlButton('crosshairs', function() {
       var layerCenter = layer.extent.getCenterLonLat();
-      layer.shift(Waze.map.getCenter().lon - layerCenter.lon, Waze.map.getCenter().lat - layerCenter.lat);
+      layer.shift(W.map.getCenter().lon - layerCenter.lon, W.map.getCenter().lat - layerCenter.lat);
     }));
     instructions.appendChild(createControlButton('arrow-right', function() {
-      layer.shift(10 * Waze.map.getResolution() * scale.value/100, 0);
+      layer.shift(10 * W.map.getResolution() * scale.value/100, 0);
     }));
     instructions.appendChild(createControlButton('arrows-v', function() {
       layer.stretch(false, 1 + (0.01 * scale.value/100));
@@ -633,13 +633,13 @@ function init(e) {
       layer.stretch(true, 1 - (0.01 * scale.value/100));
     }, 'Compress'))
     instructions.appendChild(createControlButton('compress', function() {
-      layer.scale(1 - 0.01 * (11-Waze.map.getZoom()) * scale.value/100);
+      layer.scale(1 - 0.01 * (11-W.map.getZoom()) * scale.value/100);
     }));
     instructions.appendChild(createControlButton('arrow-down', function() {
-      layer.shift(0, -10 * Waze.map.getResolution() * scale.value/100);
+      layer.shift(0, -10 * W.map.getResolution() * scale.value/100);
     }));
     instructions.appendChild(createControlButton('expand', function() {
-      layer.scale(1 + 0.01 * (11-Waze.map.getZoom()) * scale.value/100);
+      layer.scale(1 + 0.01 * (11-W.map.getZoom()) * scale.value/100);
     }));
     instructions.appendChild(createControlButton('arrows-v', function() {
       layer.stretch(false, 1 - (0.01 * scale.value/100));
@@ -662,7 +662,7 @@ function init(e) {
     instructions.appendChild(scale);
     instructions.appendChild(sensitivity);
 
-    Waze.map.resize();
+    W.map.resize();
   }
 
   function pinToMap() {
@@ -678,7 +678,7 @@ function init(e) {
       var req = db.transaction(['overlays'], 'readwrite').objectStore('overlays').add(obj);
       req.addEventListener('success', function(e) {
         panel.className = 'hidden';
-        Waze.map.resize();
+        W.map.resize();
         addImageOverlay(obj.name, e.target.result, true);
       });
     });
@@ -702,7 +702,7 @@ function init(e) {
         overlay.extent = overlay.extent.scale(0.8);
       }
       layer = new OL.Layer.OverlayImage('Image Overlay', url, overlay.extent, new OL.Size(img.naturalWidth, img.naturalHeight), overlay.key, { 'rotation': overlay.rotation, 'opacity': overlay.opacity || 1 });
-      Waze.map.addLayer(layer);
+      W.map.addLayer(layer);
       for (var i = 0; i < imagesList.childNodes.length; i++) {
         imagesList.childNodes[i].style.fontWeight = (imagesList.childNodes[i].dataset.key == overlay.key ? '700' : '');
       }
@@ -710,19 +710,19 @@ function init(e) {
       hideOverlayButton.classList.remove('hidden');
       opacityRange.value = (overlay.opacity ? overlay.opacity * 50 : 50);
       updateParentLayer(overlay.layerTarget);
-      var targetIndex = Waze.map.getLayerIndex(Waze.map.getLayersByName(overlay.layerTarget || "")[0]);
+      var targetIndex = W.map.getLayerIndex(W.map.getLayersByName(overlay.layerTarget || "")[0]);
       if (!targetIndex || targetIndex <= 0) {
-        targetIndex = Waze.map.getLayerIndex(Waze.map.getLayerByUniqueName('satellite_imagery'));
+        targetIndex = W.map.getLayerIndex(W.map.getLayerByUniqueName('satellite_imagery'));
       }
-      Waze.map.setLayerIndex(layer, targetIndex+1);
-      Waze.map.zoomToExtent(overlay.extent);
+      W.map.setLayerIndex(layer, targetIndex+1);
+      W.map.zoomToExtent(overlay.extent);
     });
     img.src = url;
   }
 
   function removeLayer() {
     if (layer) {
-      Waze.map.removeLayer(layer);
+      W.map.removeLayer(layer);
       layer = null;
       layerControls.classList.add('hidden');
       hideOverlayButton.classList.add('hidden');
