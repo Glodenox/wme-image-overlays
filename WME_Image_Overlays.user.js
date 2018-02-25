@@ -216,6 +216,9 @@ function init(e) {
     warningMessage.style.backgroundColor = '#fff';
     warningMessage.style.width = 'calc(100% - 30px)';
     warningMessage.style.zIndex = '1';
+    warningMessage.style.border = '1px solid red';
+    warningMessage.style.borderRadius = '8px';
+    warningMessage.style.padding = '8px';
     var exclamationMark = document.createElement('i');
     exclamationMark.className = 'fa fa-fw fa-3x fa-exclamation-triangle pull-left';
     exclamationMark.style.color = '#f00';
