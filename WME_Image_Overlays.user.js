@@ -9,6 +9,8 @@
 // @grant       none
 // ==/UserScript==
 
+/* global W, $, OL, I18n */
+
 // Based on the OpenLayers.Layer.Image class
 OL.Layer.OverlayImage = OL.Class(OL.Layer, {
   isBaseLayer: false,
@@ -152,7 +154,7 @@ function init(e) {
     log('user-info element not yet available, page still loading');
     return;
   }
-  if (typeof W.loginManager === 'undefined') {
+  if (typeof W === 'undefined' || typeof W.loginManager === 'undefined' || typeof W.prefs === 'undefined' || typeof W.map === 'undefined' || typeof W.app.modeController === 'undefined') {
     setTimeout(init, 300);
     return;
   }
@@ -200,25 +202,20 @@ function init(e) {
 
   var tab = addTab();
   // Deal with events mode
-  if (W.app.modeController) {
-    W.app.modeController.model.bind('change:mode', function(model, modeId) {
-      if (modeId == 0) {
-        addTab(tab);
-      }
-    });
-  }
-  // Deal with measuring unit switches between metric and imperial
-  if (W.prefs) {
-    W.prefs.on('change:isImperial', function() {
+  W.app.modeController.model.bind('change:mode', function(model, modeId) {
+    if (modeId == 0) {
       addTab(tab);
-    });
-  }
+    }
+  });
+  // Deal with measuring unit switches between metric and imperial
+  W.prefs.on('change:isImperial', function() {
+    addTab(tab);
+  });
 
   if (localStorage.ImageOverlays_warning == undefined && W.loginManager.getUserRank() < 3) {
     var warningMessage = document.createElement('div');
     warningMessage.style.position = 'absolute';
     warningMessage.style.backgroundColor = '#fff';
-    warningMessage.style.width = 'calc(100% - 30px)';
     warningMessage.style.zIndex = '1';
     warningMessage.style.border = '1px solid red';
     warningMessage.style.borderRadius = '8px';
@@ -775,10 +772,13 @@ function addTab(recoveredTab) {
   } else {
     tab.id = 'sidepanel-imageoverlays';
     tab.className = 'tab-pane';
+    tab.style.position = 'relative';
   }
   tabHandles.appendChild(tabHandle);
   $(tabHandle.childNodes[0]).tooltip();
   tabs.appendChild(tab);
+  // Make the tab content fill up the height it gets. It is the only variable length box in this column-oriented flex container, so this shouldn't affect anyone
+  tabs.style.flexGrow = '1';
   return tab;
 }
 
