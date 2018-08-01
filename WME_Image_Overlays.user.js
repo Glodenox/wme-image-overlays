@@ -5,7 +5,7 @@
 // @description Makes it possible to add images as overlay on the Waze Map Editor
 // @include     /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @icon        data:image/png;base64,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
-// @version     1.1.0
+// @version     1.2.0
 // @grant       none
 // ==/UserScript==
 
@@ -84,12 +84,13 @@ OL.Layer.OverlayImage = OL.Class(OL.Layer, {
   },
   stretch: function(horizontal, factor) {
     var extent = this.extent.toArray();
+    var distance;
     if (horizontal) {
-      var distance = Math.abs(extent[2] - extent[0]) * (1-factor) / 2;
+      distance = Math.abs(extent[2] - extent[0]) * (1-factor) / 2;
       extent[0] += distance;
       extent[2] -= distance;
     } else {
-      var distance = Math.abs(extent[1] - extent[3]) * (1-factor) / 2;
+      distance = Math.abs(extent[1] - extent[3]) * (1-factor) / 2;
       extent[1] += distance;
       extent[3] -= distance;
     }
@@ -144,6 +145,7 @@ OL.Layer.OverlayImage = OL.Class(OL.Layer, {
   },
   CLASS_NAME: "OpenLayers.Layer.OverlayImage"
 });
+var styleElement;
 
 function init(e) {
   if (e && e.user == null) {
@@ -172,7 +174,7 @@ function init(e) {
       tab_title: 'Image Overlays',
       warning_title: 'Warning! Make sure you know which data sources you may use!',
       warning_explanation1: 'As this script allows you to add external sources to add information to the map, it is important to know that not all sources can be used freely by Waze.',
-      warning_explanation2: 'Copying information from data sources like OpenStreetMap and Bing is <strong>strictly forbidden</strong>. It may even get you banned from editing the map as it could require Waze to remove certain sections from the map.',
+      warning_explanation2: 'Copying information from data sources like OpenStreetMap and Bing Maps is <strong>strictly forbidden</strong>. It may even get you banned from editing the map as it could require Waze to remove certain sections from the map.',
       safe_sources_header: 'These are usually safe sources to use:',
       safe_sources_list: '<li>Information sent to you directly through mail by an organiser</li><li>Information on a governmental website</li><li>Maps found in newspapers or news sites</li><li>Data released as "open data" with no restrictions on commercial usage</li>',
       community_advice: 'When in doubt about a resource, contact <a href="https://wazeopedia.waze.com/">your local community</a> and ask for their advice.',
@@ -190,6 +192,8 @@ function init(e) {
       image_edit: 'Edit image',
       image_remove: 'Remove image',
       import_image: 'Import image',
+      persistent_warning: 'Data is currently not stored persistently, your browser may remove image overlays over time without warning.',
+      persistent_warning_link: 'Read more...',
       import_image_description: 'You can now paste an image from your clipboard in the WME with Ctrl+V or select an image with the file input field below.',
       import_error: 'Could not import image, the image is probably too big to retrieve. If you used the clipboard, you may want to download the image and try the file input field above instead.',
       align_image: 'Align with map',
@@ -199,6 +203,7 @@ function init(e) {
     }
   };
   setTranslations(io_strings);
+  applyStyles();
 
   var tab = addTab();
   // Deal with events mode
@@ -214,19 +219,11 @@ function init(e) {
 
   if (localStorage.ImageOverlays_warning == undefined && W.loginManager.getUserRank() < 3) {
     var warningMessage = document.createElement('div');
-    warningMessage.style.position = 'absolute';
-    warningMessage.style.backgroundColor = '#fff';
-    warningMessage.style.zIndex = '1';
-    warningMessage.style.border = '1px solid red';
-    warningMessage.style.borderRadius = '8px';
-    warningMessage.style.padding = '8px';
+    warningMessage.className = 'image-overlays-source-warning';
     var exclamationMark = document.createElement('i');
     exclamationMark.className = 'fa fa-fw fa-3x fa-exclamation-triangle pull-left';
-    exclamationMark.style.color = '#f00';
     warningMessage.appendChild(exclamationMark);
-    var warningTitle = document.createElement('p');
-    warningTitle.style.color = '#f00';
-    warningTitle.style.fontWeight = '700';
+    var warningTitle = document.createElement('h3');
     warningTitle.textContent = I18n.t('image_overlays.warning_title');
     warningMessage.appendChild(warningTitle);
     var warningExplanation1 = document.createElement('p');
@@ -240,7 +237,6 @@ function init(e) {
     safeSourcesHeader.textContent = I18n.t('image_overlays.safe_sources_header');
     warningMessage.appendChild(safeSourcesHeader);
     var safeSourcesList = document.createElement('ul');
-    safeSourcesList.style.paddingLeft = '5%';
     safeSourcesList.innerHTML = I18n.t('image_overlays.safe_sources_list');
     warningMessage.appendChild(safeSourcesList);
     var communityAdvice = document.createElement('p');
@@ -263,9 +259,7 @@ function init(e) {
     warningCountdown.textContent = '20';
     warningButton.appendChild(warningCountdown);
     warningMessage.appendChild(warningButton);
-    var warningInfo = document.createElement('p');
-    warningInfo.style.fontStyle = 'italic';
-    warningInfo.className = 'text-center';
+    var warningInfo = document.createElement('footer');
     warningInfo.textContent = I18n.t('image_overlays.warning_info');
     warningMessage.appendChild(warningInfo);
     tab.appendChild(warningMessage);
@@ -311,9 +305,7 @@ function init(e) {
   });
 
   var panel = document.createElement('div');
-  panel.className = 'hidden';
-  panel.style.backgroundColor = '#f2f3f4';
-  panel.style.padding = '15px';
+  panel.className = 'hidden image-overlays-panel';
 
   var importError = document.createElement('p');
   importError.className = 'hidden text-danger';
@@ -335,6 +327,12 @@ function init(e) {
     }
   };
 
+  var persistentStorageWarning = document.createElement('div');
+  persistentStorageWarning.className = 'alert alert-danger text-center hidden';
+  persistentStorageWarning.style.marginBottom = '1em';
+  persistentStorageWarning.innerHTML = '<i class="fa fa-exclamation-triangle"></i> ' + I18n.t('image_overlays.persistent_warning') + ' <a href="https://www.waze.com/forum/viewtopic.php?f=819&t=225760&p=1850215#p1850215" target="_blank">' + I18n.t('image_overlays.persistent_warning_link') + '</a>';
+  panel.appendChild(persistentStorageWarning);
+
   var cancelButton, importLabel, alignLabel, pinLabel,
       cancelButtonIcon = document.createElement('i'),
       breadcrumbs = document.createElement('div'),
@@ -348,10 +346,7 @@ function init(e) {
       opacityRange = document.createElement('input'),
       opacityLabel = document.createElement('label');
   cancelButton = document.createElement('button');
-  cancelButton.className = 'btn btn-default';
-  cancelButton.style.position = 'absolute';
-  cancelButton.style.right = '15px';
-  cancelButton.style.fontSize = '14px';
+  cancelButton.className = 'btn btn-default cancel';
   cancelButtonIcon.className = 'fa fa-trash-o fa-fw';
   cancelButton.appendChild(cancelButtonIcon);
   cancelButton.appendChild(document.createTextNode(I18n.t('image_overlays.cancel')));
@@ -393,10 +388,7 @@ function init(e) {
   hideOverlayButton.addEventListener('click', removeLayer);
   tab.appendChild(hideOverlayButton);
 
-  layerControls.className = 'hidden clearfix';
-  layerControls.style.marginTop = '8px';
-  layerControls.style.borderLeft = '4px solid #bbb';
-  layerControls.style.paddingLeft = '8px';
+  layerControls.className = 'hidden clearfix controls';
   opacityRange.type = 'range';
   opacityRange.min = 0;
   opacityRange.max = 50;
@@ -464,8 +456,6 @@ function init(e) {
   tab.appendChild(layerControls);
 
   var versionBlock = document.createElement('p');
-  versionBlock.style.fontSize = '0.9em';
-  versionBlock.style.marginTop = '10px';
   var versionInfo = document.createElement('a');
   versionInfo.appendChild(document.createTextNode(GM_info.script.name + ' (v' + GM_info.script.version + ')'));
   versionInfo.href = 'https://www.waze.com/forum/viewtopic.php?f=819&t=225760';
@@ -482,11 +472,7 @@ function init(e) {
       container.style.fontWeight = '700';
     }
     var remove = document.createElement('button');
-    remove.style.fontSize = '14px';
-    remove.style.float = 'right';
-    remove.style.fontWeight = 'normal';
-    remove.style.marginTop = '-6px';
-    remove.className = 'fa fa-trash-o';
+    remove.className = 'fa fa-trash-o remove';
     remove.addEventListener('click', function(e) {
       e.stopPropagation();
       getIndexedDB(function(db) {
@@ -499,12 +485,7 @@ function init(e) {
     container.appendChild(remove);
     var nameContainer = document.createElement('div');
     var rename = document.createElement('button');
-    rename.style.fontSize = '14px';
-    rename.style.float = 'right';
-    rename.style.fontWeight = 'normal';
-    rename.style.marginTop = '-6px';
-    rename.style.marginLeft = '4px';
-    rename.className = 'fa fa-pencil';
+    rename.className = 'fa fa-pencil rename';
     rename.addEventListener('click', function(e) {
       e.stopPropagation();
       getIndexedDB(function(db) {
@@ -585,6 +566,14 @@ function init(e) {
     instructions.textContent = '';
     instructions.appendChild(addImageInput);
     instructions.appendChild(importError);
+
+    if (navigator.storage.persist) {
+      navigator.storage.persist().then((persistent) => {
+        persistentStorageWarning.classList.toggle('hidden', persistent);
+        W.map.resize();
+      });
+    }
+
     panel.classList.remove('hidden');
     W.map.resize();
   }
@@ -664,10 +653,6 @@ function init(e) {
     scale.min = 0;
     scale.value = 100;
     scale.max = 200;
-    scale.style.width = '200px';
-    scale.style.display = 'inline';
-    scale.style.margin = '5px';
-    scale.style.verticalAlign = 'bottom';
     scale.addEventListener('input', function() {
       sensitivity.textContent = scale.value + '%';
     });
@@ -735,9 +720,7 @@ function init(e) {
         W.map.zoomToExtent(overlay.extent);
       }
     });
-    img.addEventListener('error', function(e) {
-      log(e);
-    });
+    img.addEventListener('error', e => log(e));
     img.src = url;
   }
 
@@ -791,8 +774,6 @@ function addTab(recoveredTab) {
 function createBreadcrumb(icon, text, status) {
   var label = document.createElement('span');
   label.className = 'label label-' + status;
-  label.style.fontSize = '1.2em';
-  label.style.cursor = 'default';
   var i = document.createElement('i');
   i.className = 'fa fa-fw fa-' + icon;
   label.appendChild(i);
@@ -815,12 +796,14 @@ function createControlButton(icon, callback, text) {
 function getIndexedDB(callback) {
   var req = indexedDB.open('ImageOverlays', 1);
   req.addEventListener('upgradeneeded', function(e) {
+    if (e.oldVersion) {
+      log('upgradeneeded event triggered again? Old version: ' + e.oldVersion);
+      log(e);
+    }
     e.target.result.createObjectStore('overlays', { autoIncrement: true });
   });
   req.addEventListener('error', log);
-  req.addEventListener('success', function(e) {
-    callback(e.target.result);
-  });
+  req.addEventListener('success', e => callback(e.target.result));
 }
 
 function log(message) {
@@ -828,6 +811,94 @@ function log(message) {
     console.log('%c' + GM_info.script.name + ' (v' + GM_info.script.version + '): %c' + message, 'color:black', 'color:#d97e00');
   } else {
     console.log('%c' + GM_info.script.name + ' (v' + GM_info.script.version + ')', 'color:black', message);
+  }
+}
+
+function applyStyles() {
+  if (!styleElement) {
+    styleElement = document.createElement('style');
+    styleElement.textContent = `
+.image-overlays-source-warning {
+  position: absolute;
+  background-color: #fff;
+  z-index: 1;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.image-overlays-source-warning > i:first-child {
+  color: #f00;
+}
+
+.image-overlays-source-warning h3 {
+  margin-bottom: 15px;
+  font-size: 13px;
+  line-height: 1.42857;
+  color: #f00;
+  font-weight: 700;
+}
+
+.image-overlays-source-warning ul {
+  padding-left: 5%;
+}
+
+.image-overlays-source-warning footer {
+  font-style: italic;
+  text-align: center;
+}
+
+.image-overlays-panel {
+  background-color: #f2f3f4;
+  padding: 15px;
+}
+
+.image-overlays-panel .cancel {
+  position: absolute;
+  right: 15px;
+  font-size: 14px;
+}
+
+#sidepanel-imageoverlays .controls {
+  margin-top: 8px;
+  border-left: 4px solid #bbb;
+  padding-left: 8px;
+}
+
+.image-overlays-panel input[type=range] {
+  width: 200px;
+  display: inline;
+  margin: 5px;
+  vertical-align: bottom;
+}
+
+.image-overlays-panel .label {
+  font-size: 1.2em;
+  cursor: default;
+}
+
+#sidepanel-imageoverlays p:last-child {
+  font-size: 0.9em;
+  margin-top: 10px;
+}
+
+#sidepanel-imageoverlays .result .remove {
+  font-size: 14px;
+  float: right;
+  font-weight: normal;
+  margin-top: -6px;
+}
+
+#sidepanel-imageoverlays .result .rename {
+  font-size: 14px;
+  float: right;
+  font-weight: normal;
+  margin-top: -6px;
+  margin-left: 4px;
+}
+`;
+  }
+  if (!styleElement.parentNode) {
+    document.head.appendChild(styleElement);
   }
 }
 
