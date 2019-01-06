@@ -480,7 +480,7 @@ function init(e) {
         db.transaction(['overlays'], 'readonly').objectStore('overlays').get(layer.key).addEventListener('success', function(e) {
           var downloadPrompt = function(data) {
             var download = document.createElement('a');
-            download.download = 'image-overlays.json';
+            download.download = data.name.replace(/[/\\?%*:|"<>\.$#,= ]/g, '-') + '.json'; // Transform all commonly reserved file name characters to dashes
             download.style.display = 'none';
             download.href = 'data:application/octet-stream,' + encodeURIComponent(JSON.stringify(data));
             document.body.appendChild(download);
@@ -494,7 +494,7 @@ function init(e) {
               result.blob = fileReader.result;
               downloadPrompt(result);
             });
-            fileReader.readAsText(result.blob);
+            fileReader.readAsDataURL(result.blob);
           } else {
             downloadPrompt(result);
           }
@@ -803,11 +803,21 @@ function init(e) {
         document.body.removeChild(fileInput);
         var result = JSON.parse(fileReader.result);
         if (result.blob) {
-          result.blob = new File([ result.blob ], result.name);
+          var mimeTypeSearch = result.blob.match(/:([^;]+);/);
+          var mimeType = (mimeTypeSearch.length == 2 ? mimeTypeSearch[2] : '');
+          var bytes = atob(result.blob.split(',')[1]);
+          var arrayBuffer = new ArrayBuffer(bytes.length);
+          var intArray = new Uint8Array(arrayBuffer);
+          for (var i = 0; i < bytes.length; i++) {
+            intArray[i] = bytes.charCodeAt(i);
+          }
+          result.blob = new File([ arrayBuffer ], result.name, { type: mimeType });
         }
         storeOverlay(result, function(e) {
           removeLayer();
           addImageOverlay(result.name, e.target.result, true);
+          result.key = e.target.result;
+          result.extent = new OL.Bounds(result.extent);
           displayImageOverlay(result);
         });
       });
