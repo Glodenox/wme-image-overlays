@@ -341,10 +341,12 @@ function init(e) {
       instructions = document.createElement('div'),
       addImageOverlayButton = document.createElement('button'),
       addSpan = document.createElement('span'),
+      importButton = document.createElement('button'),
       hideOverlayButton = document.createElement('button'),
       layerControls = document.createElement('div'),
       opacityRange = document.createElement('input'),
-      opacityLabel = document.createElement('label');
+      opacityLabel = document.createElement('label'),
+      exportButton = document.createElement('button');
   cancelButton = document.createElement('button');
   cancelButton.className = 'btn btn-default cancel';
   cancelButtonIcon.className = 'fa fa-trash-o fa-fw';
@@ -382,6 +384,11 @@ function init(e) {
   addImageOverlayButton.appendChild(document.createTextNode(I18n.t('image_overlays.add_image')));
   addImageOverlayButton.addEventListener('click', displayImportPage);
   tab.appendChild(addImageOverlayButton);
+  importButton.className = 'btn btn-default';
+  importButton.style.float = 'right';
+  importButton.innerHTML = '<i class="fa fa-download"></i> Import image';
+  importButton.addEventListener('click', importLayer);
+  tab.appendChild(importButton);
   hideOverlayButton.className = 'btn btn-default hidden';
   hideOverlayButton.style.float = 'right';
   hideOverlayButton.textContent = I18n.t('image_overlays.hide_overlay');
@@ -453,6 +460,38 @@ function init(e) {
   parentLayerLabel.appendChild(parentLayerHelp);
   layerControls.appendChild(parentLayerLabel);
   layerControls.appendChild(parentLayer);
+  exportButton.className = 'btn btn-default';
+  exportButton.style.margin = '10px 0';
+  exportButton.innerHTML = '<i class="fa fa-upload"></i> Export image';
+  exportButton.addEventListener('click', function() {
+    if (layer && layer.key) {
+      getIndexedDB(function(db) {
+        db.transaction(['overlays'], 'readonly').objectStore('overlays').get(layer.key).addEventListener('success', function(e) {
+          var downloadPrompt = function(data) {
+            var download = document.createElement('a');
+            download.download = data.name.replace(/[/\\?%*:|"<>\.$#,= ]/g, '-') + '.json'; // Transform all commonly reserved file name characters to dashes
+            download.style.display = 'none';
+            download.href = 'data:application/octet-stream,' + encodeURIComponent(JSON.stringify(data));
+            document.body.appendChild(download);
+            download.click();
+            document.body.removeChild(download);
+          };
+          var result = e.target.result;
+          if (result.blob) {
+            var fileReader = new FileReader();
+            fileReader.addEventListener('load', function() {
+              result.blob = fileReader.result;
+              downloadPrompt(result);
+            });
+            fileReader.readAsDataURL(result.blob);
+          } else {
+            downloadPrompt(result);
+          }
+        });
+      });
+    }
+  });
+  layerControls.appendChild(exportButton);
   tab.appendChild(layerControls);
 
   var versionBlock = document.createElement('p');
@@ -709,6 +748,7 @@ function init(e) {
       }
       layerControls.classList.remove('hidden');
       hideOverlayButton.classList.remove('hidden');
+      importButton.classList.add('hidden');
       opacityRange.value = (overlay.opacity ? overlay.opacity * 50 : 50);
       updateParentLayer(overlay.layerTarget);
       var targetIndex = W.map.getLayerIndex(W.map.getLayersByName(overlay.layerTarget || "")[0]);
@@ -730,10 +770,47 @@ function init(e) {
       layer = null;
       layerControls.classList.add('hidden');
       hideOverlayButton.classList.add('hidden');
+      importButton.classList.remove('hidden');
       for (var i = 0; i < imagesList.childNodes.length; i++) {
         imagesList.childNodes[i].style.fontWeight = '';
       }
     }
+  }
+
+  // Request file to import, then process it
+  function importLayer() {
+    var fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.json';
+    fileInput.style.display = 'none';
+    fileInput.addEventListener('change', function() {
+      var fileReader = new FileReader();
+      fileReader.addEventListener('load', function() {
+        document.body.removeChild(fileInput);
+        var result = JSON.parse(fileReader.result);
+        if (result.blob) {
+          var mimeTypeSearch = result.blob.match(/:([^;]+);/);
+          var mimeType = (mimeTypeSearch.length == 2 ? mimeTypeSearch[2] : '');
+          var bytes = atob(result.blob.split(',')[1]);
+          var arrayBuffer = new ArrayBuffer(bytes.length);
+          var intArray = new Uint8Array(arrayBuffer);
+          for (var i = 0; i < bytes.length; i++) {
+            intArray[i] = bytes.charCodeAt(i);
+          }
+          result.blob = new File([ arrayBuffer ], result.name, { type: mimeType });
+        }
+        storeOverlay(result, function(e) {
+          removeLayer();
+          addImageOverlay(result.name, e.target.result, true);
+          result.key = e.target.result;
+          result.extent = new OL.Bounds(result.extent);
+          displayImageOverlay(result);
+        });
+      });
+      fileReader.readAsText(fileInput.files[0]);
+    });
+    document.body.appendChild(fileInput);
+    fileInput.click();
   }
 }
 
