@@ -5,7 +5,7 @@
 // @description Makes it possible to add images as overlay on the Waze Map Editor
 // @include     /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @icon        data:image/png;base64,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
-// @version     1.3.1
+// @version     1.4.0
 // @grant       none
 // ==/UserScript==
 
@@ -188,16 +188,17 @@ function init(e) {
       parent_map_layer: 'Parent map layer',
       parent_map_layer_help: 'This decides on top of which map layer the image overlay will be drawn',
       layer_hidden: 'Hidden',
-      image_name: 'Name',
-      image_edit: 'Edit image',
-      image_remove: 'Remove image',
-      import_image: 'Import image',
+      image_name: 'Overlay Image Name',
+      stretch_image: 'Stretch:',
+      control_sensitivity: 'Sensitivity:',
       persistent_warning: 'Data is currently not stored persistently, your browser may remove image overlays over time without warning.',
       persistent_warning_link: 'Read more...',
+      export_image: 'Export image',
+      import_image: 'Import image',
       import_image_description: 'You can now paste an image from your clipboard in the WME with Ctrl+V or select an image with the file input field below.',
       import_error: 'Could not import image, the image is probably too big to retrieve. If you used the clipboard, you may want to download the image and try the file input field above instead.',
       align_image: 'Align with map',
-      align_image_description: "You can use the controls below to align the image overlay with the map. Use the 'Attach to map' button above to finish.",
+      align_image_description: "You can use the controls below to align the image overlay with the map. Use the 'Attach to map' button to finish.",
       attach_image: 'Attach to map',
       cancel: 'Cancel'
     }
@@ -281,8 +282,68 @@ function init(e) {
     tabActivityListener.observe(tab, { attributes: true, attributeFilter: [ 'class' ] });
   }
 
-  var layer = null;
-  var currentBlob = null;
+  var layer = null,
+      currentBlob = null,
+      currentKey = null;
+
+  var editPanel = document.createElement('div');
+  editPanel.className = 'hidden';
+
+  var importError = document.createElement('p');
+  importError.className = 'hidden text-danger';
+  importError.textContent = I18n.t('image_overlays.import_error');
+  var pasteListener = function(e) {
+    var items = e.clipboardData.items;
+    for (var i = 0; i < items.length; ++i) {
+      if (items[i].kind == 'file' && items[i].type.indexOf('image/') !== -1) {
+        var blob = items[i].getAsFile();
+        if (blob) {
+          importError.classList.add('hidden');
+          displayAlignPage({
+            blob: blob
+          });
+        } else {
+          importError.classList.remove('hidden');
+        }
+        break;
+      }
+    }
+  };
+
+  var persistentStorageWarning = document.createElement('div');
+  persistentStorageWarning.className = 'alert alert-danger text-center hidden';
+  persistentStorageWarning.style.marginBottom = '1em';
+  persistentStorageWarning.innerHTML = '<i class="fa fa-exclamation-triangle"></i> ' + I18n.t('image_overlays.persistent_warning') + ' <a href="https://www.waze.com/forum/viewtopic.php?f=819&t=225760&p=1850215#p1850215" target="_blank">' + I18n.t('image_overlays.persistent_warning_link') + '</a>';
+  tab.appendChild(persistentStorageWarning);
+
+  var cancelButton,
+      cancelButtonIcon = document.createElement('i'),
+      panelTitle = document.createElement('h3'),
+      panelTitleIcon = document.createElement('i'),
+      panelTitleText = document.createElement('span'),
+      description = document.createElement('p'),
+      instructions = document.createElement('div'),
+      overlayControls = document.createElement('div'),
+      addImageOverlayButton = document.createElement('button'),
+      addSpan = document.createElement('span'),
+      importButton = document.createElement('button'),
+      hideOverlayButton = document.createElement('button'),
+      layerControls = document.createElement('div'),
+      opacityRange = document.createElement('input'),
+      opacityLabel = document.createElement('label'),
+      imageNameInput = document.createElement('input'),
+      exportButton = document.createElement('button');
+  panelTitle.appendChild(panelTitleIcon);
+  panelTitle.appendChild(document.createTextNode(' '));
+  panelTitle.appendChild(panelTitleText);
+  panelTitle.className = 'image-overlays-panel-title';
+  editPanel.appendChild(panelTitle);
+  description.className = 'text-center';
+  editPanel.appendChild(description);
+  instructions.className = 'text-center';
+  editPanel.appendChild(instructions);
+  tab.appendChild(editPanel);
+
   var emptyList = document.createElement('span');
   emptyList.style.fontStyle = 'italic';
   emptyList.appendChild(document.createTextNode(I18n.t('image_overlays.empty_list')));
@@ -304,96 +365,24 @@ function init(e) {
     });
   });
 
-  var panel = document.createElement('div');
-  panel.className = 'hidden image-overlays-panel';
-
-  var importError = document.createElement('p');
-  importError.className = 'hidden text-danger';
-  importError.textContent = I18n.t('image_overlays.import_error');
-  var pasteListener = function(e) {
-    var items = e.clipboardData.items;
-    for (var i = 0; i < items.length; ++i) {
-      if (items[i].kind == 'file' && items[i].type.indexOf('image/') !== -1) {
-        var blob = items[i].getAsFile();
-        if (blob) {
-          importError.classList.add('hidden');
-          displayAlignPage(blob);
-        } else {
-          importError.classList.remove('hidden');
-          W.map.resize();
-        }
-        break;
-      }
-    }
-  };
-
-  var persistentStorageWarning = document.createElement('div');
-  persistentStorageWarning.className = 'alert alert-danger text-center hidden';
-  persistentStorageWarning.style.marginBottom = '1em';
-  persistentStorageWarning.innerHTML = '<i class="fa fa-exclamation-triangle"></i> ' + I18n.t('image_overlays.persistent_warning') + ' <a href="https://www.waze.com/forum/viewtopic.php?f=819&t=225760&p=1850215#p1850215" target="_blank">' + I18n.t('image_overlays.persistent_warning_link') + '</a>';
-  panel.appendChild(persistentStorageWarning);
-
-  var cancelButton, importLabel, alignLabel, pinLabel,
-      cancelButtonIcon = document.createElement('i'),
-      breadcrumbs = document.createElement('div'),
-      breadcrumbSeparator = document.createElement('i'),
-      description = document.createElement('p'),
-      instructions = document.createElement('div'),
-      addImageOverlayButton = document.createElement('button'),
-      addSpan = document.createElement('span'),
-      importButton = document.createElement('button'),
-      hideOverlayButton = document.createElement('button'),
-      layerControls = document.createElement('div'),
-      opacityRange = document.createElement('input'),
-      opacityLabel = document.createElement('label'),
-      exportButton = document.createElement('button');
-  cancelButton = document.createElement('button');
-  cancelButton.className = 'btn btn-default cancel';
-  cancelButtonIcon.className = 'fa fa-trash-o fa-fw';
-  cancelButton.appendChild(cancelButtonIcon);
-  cancelButton.appendChild(document.createTextNode(I18n.t('image_overlays.cancel')));
-  cancelButton.addEventListener('click', function() {
-    panel.classList.add('hidden');
-    addImageOverlayButton.disabled = false;
-    W.map.resize();
-    removeLayer();
-  });
-  panel.appendChild(cancelButton);
-  breadcrumbs.className = 'text-center';
-  breadcrumbs.style.marginBottom = '1.5em';
-  breadcrumbSeparator.className = 'fa fa-fw fa-angle-right';
-  importLabel = createBreadcrumb('download', I18n.t('image_overlays.import_image'), 'primary');
-  breadcrumbs.appendChild(importLabel);
-  breadcrumbs.appendChild(breadcrumbSeparator);
-  alignLabel = createBreadcrumb('arrows-alt', I18n.t('image_overlays.align_image'), 'default');
-  breadcrumbs.appendChild(alignLabel);
-  breadcrumbs.appendChild(breadcrumbSeparator.cloneNode());
-  pinLabel = createBreadcrumb('map-pin', I18n.t('image_overlays.attach_image'), 'default');
-  breadcrumbs.appendChild(pinLabel);
-  panel.appendChild(breadcrumbs);
-  description.className = 'text-center';
-  panel.appendChild(description);
-  instructions.className = 'text-center';
-  panel.appendChild(instructions);
-  document.getElementById('map').insertBefore(panel, document.getElementById('map').firstChild);
-
   addImageOverlayButton.className = 'btn btn-primary';
   addSpan.className = 'fa fa-plus';
   addSpan.style.marginRight = '5px';
   addImageOverlayButton.appendChild(addSpan);
   addImageOverlayButton.appendChild(document.createTextNode(I18n.t('image_overlays.add_image')));
   addImageOverlayButton.addEventListener('click', displayImportPage);
-  tab.appendChild(addImageOverlayButton);
+  overlayControls.appendChild(addImageOverlayButton);
   importButton.className = 'btn btn-default';
   importButton.style.float = 'right';
-  importButton.innerHTML = '<i class="fa fa-download"></i> Import image';
+  importButton.innerHTML = '<i class="fa fa-download"></i> ' + I18n.t('image_overlays.import_image');
   importButton.addEventListener('click', importLayer);
-  tab.appendChild(importButton);
+  overlayControls.appendChild(importButton);
   hideOverlayButton.className = 'btn btn-default hidden';
   hideOverlayButton.style.float = 'right';
   hideOverlayButton.textContent = I18n.t('image_overlays.hide_overlay');
   hideOverlayButton.addEventListener('click', removeLayer);
-  tab.appendChild(hideOverlayButton);
+  overlayControls.appendChild(hideOverlayButton);
+  tab.appendChild(overlayControls);
 
   layerControls.className = 'hidden clearfix controls';
   opacityRange.type = 'range';
@@ -462,10 +451,38 @@ function init(e) {
   layerControls.appendChild(parentLayer);
   exportButton.className = 'btn btn-default';
   exportButton.style.margin = '10px 0';
-  exportButton.innerHTML = '<i class="fa fa-upload"></i> Export image';
+  exportButton.innerHTML = '<i class="fa fa-upload"></i> ' + I18n.t('image_overlays.export_image');
   exportButton.addEventListener('click', exportLayer);
   layerControls.appendChild(exportButton);
   tab.appendChild(layerControls);
+  imageNameInput.className = 'form-control imageoverlays-margins';
+  imageNameInput.placeholder = I18n.t('image_overlays.image_name');
+
+  var editButtonsContainer = document.createElement('div');
+  editButtonsContainer.className = 'hidden imageoverlays-margins';
+  editButtonsContainer.style.height = '30px';
+  cancelButton = document.createElement('button');
+  cancelButton.className = 'btn btn-default cancel';
+  cancelButtonIcon.className = 'fa fa-trash-o fa-fw';
+  cancelButton.appendChild(cancelButtonIcon);
+  cancelButton.appendChild(document.createTextNode(I18n.t('image_overlays.cancel')));
+  cancelButton.addEventListener('click', function() {
+    editPanel.classList.add('hidden');
+    editButtonsContainer.classList.add('hidden');
+    exportButton.classList.remove('hidden');
+    overlayControls.classList.remove('hidden');
+    imagesList.classList.remove('hidden');
+    emptyList.classList.toggle('hidden', imagesList.childNodes.length > 0);
+    currentKey = null;
+    removeLayer();
+  });
+  editButtonsContainer.appendChild(cancelButton);
+  var pinToMapButton = document.createElement('button');
+  pinToMapButton.className = 'btn btn-primary';
+  pinToMapButton.innerHTML = '<i class="fa fa-map-pin fa-fw"></i> ' + I18n.t('image_overlays.attach_image');
+  pinToMapButton.addEventListener('click', pinToMap);
+  editButtonsContainer.appendChild(pinToMapButton);
+  tab.appendChild(editButtonsContainer);
 
   var versionBlock = document.createElement('p');
   var versionInfo = document.createElement('a');
@@ -490,32 +507,32 @@ function init(e) {
       getIndexedDB(function(db) {
         db.transaction(['overlays'], 'readwrite').objectStore('overlays').delete(key).addEventListener('success', function(e) {
           container.parentNode.removeChild(container);
+          emptyList.classList.toggle('hidden', imagesList.childNodes.length > 0);
           removeLayer();
         });
       });
     });
     container.appendChild(remove);
     var nameContainer = document.createElement('div');
-    var rename = document.createElement('button');
-    rename.className = 'fa fa-pencil rename';
-    rename.addEventListener('click', function(e) {
+    var editOverlay = document.createElement('button');
+    editOverlay.className = 'fa fa-pencil rename';
+    editOverlay.addEventListener('click', function(e) {
       e.stopPropagation();
       getIndexedDB(function(db) {
         var objectStore = db.transaction(['overlays'], 'readwrite').objectStore('overlays');
         objectStore.get(key).addEventListener('success', function(e) {
           var overlay = e.target.result;
-          var response = prompt('Please enter a new name for this image overlay', overlay.name);
-          if (response && response.length > 0) {
-            overlay.name = response;
-            objectStore.put(overlay, key).addEventListener('success', function() {
-              nameContainer.textContent = overlay.name;
-              nameContainer.style.fontStyle = '';
-            });
-          }
+          overlay.key = key;
+          editPanel.classList.remove('hidden');
+          overlayControls.classList.add('hidden');
+          editButtonsContainer.classList.remove('hidden');
+          imagesList.classList.add('hidden');
+          emptyList.classList.add('hidden');
+          displayAlignPage(overlay, key);
         });
       });
     });
-    container.appendChild(rename);
+    container.appendChild(editOverlay);
     if (name && name.length > 0) {
       nameContainer.textContent = name;
     } else {
@@ -530,7 +547,6 @@ function init(e) {
         getIndexedDB(function(db) {
           db.transaction(['overlays'], 'readonly').objectStore('overlays').get(key).addEventListener('success', function(e) {
             var overlay = e.target.result;
-            overlay.extent = new OL.Bounds(overlay.extent);
             overlay.key = key;
             displayImageOverlay(overlay);
           });
@@ -559,12 +575,15 @@ function init(e) {
   }
 
   function displayImportPage() {
-    addImageOverlayButton.disabled = true;
+    editPanel.classList.remove('hidden');
+    overlayControls.classList.add('hidden');
+    editButtonsContainer.classList.remove('hidden');
+    pinToMapButton.classList.add('hidden');
+    imagesList.classList.add('hidden');
+    emptyList.classList.add('hidden');
     document.addEventListener('paste', pasteListener);
-    importLabel.className = 'label label-primary';
-    alignLabel.className = 'label label-default';
-    pinLabel.style.cursor = 'default';
-    pinLabel.removeEventListener('click', pinToMap);
+    panelTitleIcon.className = 'fa fa-download';
+    panelTitleText.textContent = I18n.t('image_overlays.import_image');
     removeLayer();
 
     description.textContent = I18n.t('image_overlays.import_image_description');
@@ -573,7 +592,9 @@ function init(e) {
     addImageInput.accepts = 'image/*';
     addImageInput.className = 'center-block';
     addImageInput.addEventListener('change', function() {
-      displayAlignPage(addImageInput.files[0]);
+      displayAlignPage({
+        blob: addImageInput.files[0]
+      });
     });
     instructions.textContent = '';
     instructions.appendChild(addImageInput);
@@ -582,29 +603,22 @@ function init(e) {
     if (navigator.storage.persist) {
       navigator.storage.persist().then((persistent) => {
         persistentStorageWarning.classList.toggle('hidden', persistent);
-        W.map.resize();
       });
     }
-
-    panel.classList.remove('hidden');
-    W.map.resize();
+    editPanel.classList.remove('hidden');
   }
 
-  function displayAlignPage(blob) {
-    currentBlob = blob;
+  function displayAlignPage(overlay, key) {
+    currentBlob = overlay.blob;
+    currentKey = key;
     document.removeEventListener('paste', pasteListener);
-    importLabel.className = 'label label-success';
-    alignLabel.className = 'label label-primary';
+    panelTitleIcon.className = 'fa fa-arrows-alt';
+    panelTitleText.textContent = I18n.t('image_overlays.align_image');
     parentLayer.selectedIndex = 0;
+    exportButton.classList.add('hidden');
+    pinToMapButton.classList.remove('hidden');
 
-    displayImageOverlay({
-      'blob': blob,
-      'extent': W.map.getExtent(),
-      'rotation': 0
-    }, true);
-
-    pinLabel.style.cursor = 'pointer';
-    pinLabel.addEventListener('click', pinToMap);
+    displayImageOverlay(overlay, !currentKey);
 
     description.textContent = I18n.t('image_overlays.align_image_description');
     var scale = document.createElement('input');
@@ -625,9 +639,6 @@ function init(e) {
       layer.rotate(45);
     }, '45°'));
     instructions.appendChild(document.createElement('br'));
-    instructions.appendChild(createControlButton('arrows-h', function() {
-      layer.stretch(true, 1 + (0.01 * scale.value/100));
-    }, 'Stretch'));
     instructions.appendChild(createControlButton('arrow-left', function() {
       layer.shift(-10 * W.map.getResolution() * scale.value/100, 0);
     }));
@@ -638,13 +649,7 @@ function init(e) {
     instructions.appendChild(createControlButton('arrow-right', function() {
       layer.shift(10 * W.map.getResolution() * scale.value/100, 0);
     }));
-    instructions.appendChild(createControlButton('arrows-v', function() {
-      layer.stretch(false, 1 + (0.01 * scale.value/100));
-    }, 'Stretch'));
     instructions.appendChild(document.createElement('br'));
-    instructions.appendChild(createControlButton('arrows-h', function() {
-      layer.stretch(true, 1 - (0.01 * scale.value/100));
-    }, 'Compress'));
     instructions.appendChild(createControlButton('compress', function() {
       layer.scale(1 - 0.01 * (11-W.map.getZoom()) * scale.value/100);
     }));
@@ -654,11 +659,37 @@ function init(e) {
     instructions.appendChild(createControlButton('expand', function() {
       layer.scale(1 + 0.01 * (11-W.map.getZoom()) * scale.value/100);
     }));
-    instructions.appendChild(createControlButton('arrows-v', function() {
-      layer.stretch(false, 1 - (0.01 * scale.value/100));
-    }, 'Compress'));
     instructions.appendChild(document.createElement('br'));
-    instructions.appendChild(document.createTextNode('Sensitivity:'));
+    var stretchLabel = document.createElement('span');
+    stretchLabel.textContent = I18n.t('image_overlays.stretch_image') + ' ';
+    instructions.appendChild(stretchLabel);
+    var horizontalStretchLabelIcon = document.createElement('i');
+    horizontalStretchLabelIcon.className = 'fa fa-arrows-h';
+    horizontalStretchLabelIcon.style.marginRight = '10px';
+    instructions.appendChild(horizontalStretchLabelIcon);
+    instructions.appendChild(createControlButton('plus', function() {
+      layer.stretch(true, 1 + (0.01 * scale.value/100));
+    }));
+    instructions.appendChild(createControlButton('minus', function() {
+      layer.stretch(true, 1 - (0.01 * scale.value/100));
+    }));
+    var verticalStretchLabelIcon = document.createElement('i');
+    verticalStretchLabelIcon.style.margin = '15px 10px 15px 20px';
+    verticalStretchLabelIcon.className = 'fa fa-arrows-v';
+    verticalStretchLabelIcon.style.marginLeft = '10px';
+    instructions.appendChild(verticalStretchLabelIcon);
+    instructions.appendChild(createControlButton('plus', function() {
+      layer.stretch(false, 1 + (0.01 * scale.value/100));
+    }));
+    instructions.appendChild(createControlButton('minus', function() {
+      layer.stretch(false, 1 - (0.01 * scale.value/100));
+    }));
+    instructions.appendChild(document.createElement('br'));
+    scale.id = 'imageoverlays-control-sensitivity';
+    var controlSensitivity = document.createElement('label');
+    controlSensitivity.textContent = I18n.t('image_overlays.control_sensitivity');
+    controlSensitivity.htmlFor = scale.id;
+    instructions.appendChild(controlSensitivity);
     var sensitivity = document.createElement('span');
     sensitivity.textContent = '100%';
     scale.type = 'range';
@@ -670,35 +701,50 @@ function init(e) {
     });
     instructions.appendChild(scale);
     instructions.appendChild(sensitivity);
-
-    W.map.resize();
+    imageNameInput.value = overlay.name || currentBlob.name;
+    instructions.appendChild(imageNameInput);
   }
 
   function pinToMap() {
     var obj = {
       'blob': currentBlob,
-      'name': currentBlob.name,
+      'name': imageNameInput.value,
       'extent': layer.extent.toArray(),
       'rotation': layer.rotation,
-      'opacity': opacityRange.value,
+      'opacity': opacityRange.value / 50,
       'layerTarget': parentLayer.value
     };
     storeOverlay(obj, function(e) {
-      panel.className = 'hidden';
-      W.map.resize();
+      editPanel.classList.add('hidden');
+      exportButton.classList.remove('hidden');
+      overlayControls.classList.remove('hidden');
+      imagesList.classList.remove('hidden');
+      for (var i = imagesList.childNodes.length - 1; i >= 0; i--) {
+        if (imagesList.childNodes[i].dataset.key == currentKey) {
+          imagesList.removeChild(imagesList.childNodes[i]);
+        }
+      }
+      layer.key = e.target.result;
       addImageOverlay(obj.name, e.target.result, true);
-    });
-    addImageOverlayButton.disabled = false;
+      currentKey = null;
+    }, currentKey);
+    editButtonsContainer.classList.add('hidden');
   }
 
   function storeOverlay(overlay, callback) {
     getIndexedDB(function(db) {
-      db.transaction(['overlays'], 'readwrite').objectStore('overlays').add(overlay).addEventListener('success', callback);
+      if (currentKey) {
+        db.transaction(['overlays'], 'readwrite').objectStore('overlays').put(overlay, currentKey).addEventListener('success', callback);
+      } else {
+        db.transaction(['overlays'], 'readwrite').objectStore('overlays').add(overlay).addEventListener('success', callback);
+      }
     });
   }
 
   function displayImageOverlay(overlay, rescale) {
     var url = window.URL.createObjectURL(overlay.blob);
+    overlay.extent = overlay.extent ? new OL.Bounds(overlay.extent) : W.map.getExtent();
+    overlay.rotation = overlay.rotation || 0;
     var img = document.createElement('img');
     img.addEventListener('load', function() {
       removeLayer();
@@ -808,7 +854,6 @@ function init(e) {
           removeLayer();
           addImageOverlay(result.name, e.target.result, true);
           result.key = e.target.result;
-          result.extent = new OL.Bounds(result.extent);
           displayImageOverlay(result);
         });
       });
@@ -851,16 +896,6 @@ function addTab(recoveredTab) {
   // Make the tab content fill up the height it gets. It is the only variable length box in this column-oriented flex container, so this shouldn't affect anyone
   tabs.style.flexGrow = '1';
   return tab;
-}
-
-function createBreadcrumb(icon, text, status) {
-  var label = document.createElement('span');
-  label.className = 'label label-' + status;
-  var i = document.createElement('i');
-  i.className = 'fa fa-fw fa-' + icon;
-  label.appendChild(i);
-  label.appendChild(document.createTextNode(' ' + text));
-  return label;
 }
 
 function createControlButton(icon, callback, text) {
@@ -929,33 +964,25 @@ function applyStyles() {
   text-align: center;
 }
 
-.image-overlays-panel {
-  background-color: #f2f3f4;
-  padding: 15px;
+h3.image-overlays-panel-title {
+  margin-bottom: 1.5em;
+  text-align: center;
 }
 
-.image-overlays-panel .cancel {
+#sidepanel-imageoverlays .cancel {
   position: absolute;
   right: 15px;
-  font-size: 14px;
 }
 
 #sidepanel-imageoverlays .controls {
   margin-top: 8px;
-  border-left: 4px solid #bbb;
-  padding-left: 8px;
 }
 
-.image-overlays-panel input[type=range] {
-  width: 200px;
+#sidepanel-imageoverlays input[type=range] {
+  width: 180px;
   display: inline;
   margin: 5px;
   vertical-align: bottom;
-}
-
-.image-overlays-panel .label {
-  font-size: 1.2em;
-  cursor: default;
 }
 
 #sidepanel-imageoverlays p:last-child {
@@ -976,6 +1003,10 @@ function applyStyles() {
   font-weight: normal;
   margin-top: -6px;
   margin-left: 4px;
+}
+
+.imageoverlays-margins {
+  margin: 15px 0 15px 0;
 }
 `;
   }
