@@ -5,151 +5,21 @@
 // @description Makes it possible to add images as overlay on the Waze Map Editor
 // @include     /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @icon        data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQ8AAAEPCAYAAABcL0E+AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4QQdBjEKZDrZGwAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAPx0lEQVR42u2dXXbjuBFGCxruyP3e2cWsIOqcLCjH41nB7CLzbi0ph3loU01JFAUQf1WF+z31jG35GiSvAfAzJUIIIYQQQgghhBBCCCGEEEIIIYQQQgghhBBCCCGEEEIIIYQYSpjnmVEg/U/EEIRz0VYmhoD0loaIyDzPN/8mzDwIeSmNlI8R5EGQRtHPJciDIA0kgjwIKXvhIxHkQZAGEkEehPS7sJEI8iBIA4kgD4I0YBklJ4aAHL1Q163Q5cLNeL05l2cRx8JGmHkQIzONI7/5F2ncNUxDLx6CPEjHJUHM566lsfP1oRUPQR5E0T7C1tfuSSNGIpTNkAdxLI0nrzXnXvSlzlckgjyIcmmkzjSOzESQCPIgSAOJIA+CNJo3TJEI8iBIA4kgD6JeGiUukp7SqCERnmyGPEjCb9OC5S5tUqRshjxIiyl4wXKXNilSNkMepMW6vWC5S5sUKZshD9LixC5V7ip5jpW46IWyGfIg9U7kSuUuTVLk7gzyQBpapVGCtdHjDJEI8kAaGqVxhL3T4wyRCPJAGhqlEfOzKHmcIRJBHj6l4bXcpY2HshnycDvTcFzu0sZD2Qx5+FyeOC53aeOhbIY8fO5pOC53aeOhbIY8fEjjyWu5K3dRNkMepOKJM0i5SxvPkHdnkAfSqMKq7b1qKZshD6TRUBpH2LW9Vy1lM+SBNDpKI+Zn0fZetZTNkIcraVDuGpPHa9kMeXSYaVDuGpbHVdkMeXRcnlDuGpbHRdkMeSjY06DcNSyP6bIZ8ugojSevRblrMB4xWjZDHkoOFOUueKzdnUEejqRRgnXQcpc2HhMSQR4OpXGEnXIXZTPkgTSSfhbKXSZ4VEoEeUQMNOUueJSci6rKZsgjwc6Uu+BRwqOibIY8Dgwk5S54lPB0LZsNLw/KXfA44OlSNhtWHpS74PHGI43LZsPJg3IXPAPwNLk7M4w8KHfBMyBPVYm4lwflLnjgqSMRt/Kg3AUPPHUl4k4elLvggaeeRG6uLzdvfUe5Cx54Unmyymbm5UG5Cx54snkOlc3MyoNyFzzwFOdJKpuZkwflLnjgqcsT6wUz8qDcBQ88zXmCaXlQ7oIHnu48wZQ8KHfBA4/uspk6eVDuggce9TxBlTwod8EDjy2ekwaQEILM83wdmOXfy8dSpRFCmK/9+xBUDDQ88DjjCd1mHpS74IHHJE/Zh4e02tOg3AUPPN14HqY8zeRBuQseeEzyPK+uV39LOspd8MBjkefl5ko1eVDuggcekzzxf2lb/C3oKHfBA49FnuTbOKHgRW5WGjE/C2UheJzyHH8wUPZbzlHuggceizzZhZFTDgjlLrs8f4R/MD5j8oRSzzKdaixP7gcstdyV8vUtpnjeeHLEMcL4OOUpbq+ppDRSJBKzPGk56KWlCA88SniqTXmmGtJ4MWhzSQm1OOjwwGOQp/o66ZSyp5H5Q80/f6bjr5ezp1Lj57POs7d8YXzM8oQW4ticeVi45Zpj7hq2t8Tzar9j9PExzNN8R3ayJI2cQW+xzoQHng483W7jnGosT5Zbrq12lfemf6V/Pus8W0sXxsckT+gpDhGRaQ1pvdy1dU8dnl95l++7nBwvEzx9CyPrmUfuxg3lLls82sLxit/T0CSOqzxipksxy5OSu8dHBrlk49UjzytWjpdKHnXS2JRH5Jrr5Z5Gy0GPWZPCs78kfZfvjI8+HrXSuO55JKy5KHcZ5omppHO8VPCYWdfGNEyzN0JLDnqFxis88HTnsSaOXXlQ7oIHniY8ZnfQT1vSqN3TSNyYrX6fHZ79ZQ3jU4UnWBbHzcyjR0/jxV/dCjxleHKf3cHxKsrj5l79RLkLHnia8Lgr+Jyub1pLOWd4npQZCscrfk/Doziuy5aVQJrPQngSVF2eUksWjle6NMR5prvpVjOJ8CQoeJzyDPP3B+Hom0fXPOg1vhae7ZnIj/m/jA/SOLbn8WLjJ8zzHHgSFDzwbPOIiMinhHAZ7w8ep8hBP7ycoSwEj0ceOcsvW3x8fez89XpvM/LIkQhPgoLHI8+NNO4zmESmg4P+VCKUhXTz3D8QiPGJ49mVxqASOWUO+s2eSOvHtb1a08KzfZFsMTI+2zxylpAkjiXnXyIJlyAe90SmQoN+nYnkPs4wN/fvnQvPaz7GZ3N5sghglo8EeZxvZx+eZyKhxoHSUjbrORXWynO/bPmn/Ft+k98Zn7U0ngshJEnjxedal0ioXJxRUTZreVJq5fmf/CUiIn/Kfx7ksaSFRLSOz6Y0YiSSIg1nEplqvnjNxipPpkqTRkyWzx1pfKKkcbf8kLMsIOGQNJwsZ6YW36SkRHgyVXlp1JSI5id3JYnjmUTOL5YzjiUytfxmlM3q8+RIo6REFJe7yuV+JjKYRKYe35SyWXmektLIkYjicle9DCqRqec3p2yWz1NTGikSUVzuapfBJDJpgLiXSOuT8NVJqZGnpTReSUTj+DSVRk2JrMtmyiSiQh5bEqG8tM/zm/zeVSDr27pKy12SdSckN2uGIxIxUDYLmtqOGycEZbMInpYS2euCKC539ZHG84+5KJuplkdLiXgom9WUSEqBTHG5q480YiRisGxmQh41JeLxSVklJZLTOlVT7qopkQIXveSWzTpJxJQ81gLJPSlLnthaylQlJVKyqq6m3FVSIiVFFLOcUSgRc/LInYnUnFJrKVPlSKTm37eoKXflCKDmEsiYREzLI0UiLTfztJSpUiTS8i9r1ZS7UoTQcvPViERcyGNPIj3uAOx9bw08a4n0+HP8mPHp0tPYEkTP277KJeJKHqX3RUpfJPA02M8oedH2kkYNidz2TopIxKU8cvZEav527Tnr0M6jtNyllSevbFZoJuJaHj0lwpPNEqTRc38h4SKjbDagPFpKhCebZUijx0V7rNyljadL2WwoedSUCG/LWFAaLS7aEuWuwctmw8nj+gj8b0LZrCHPYXGUvmjrlLu08TS5OzOMPK7S2DpIH0LZrBLPYOUubTxVJeJeHrvSOCARymaUuwzyVJGIW3kkSSNCIpTN4ngod8kwZTN38riRRu4B+xDKZq32M0peJL0uUis8Jcpm3xzJY3emcWxNOl+/5qP/BUu5K+G3PTyxPMlls7cfbyIicrlc7MsjaXkStyadn35OB4lQ7so4pvAUK5st0lhiWh5Zexrba9I5+vUaSIRyV8HvAU/6cuaJNEzLI0sa24M2H369ChKh3FXxNeGJ3aMJz6RhUh5FpZE604gQSO5FS7mr4YUGT+z+RjAtD7XSKDQTodzVcYoPz2GJqJaHKWkckAjlLqHcZYxnLRGV8jAtjQiJUO56cQFQ7lLP8/bjLaiSR9FyV29pVNoXKS2RbtJ4dpFoOV7wRPGcNEgjXMJNGev67/OBk/sss5xlXr1faP+B/vzFcXPhdhTHu3yXd/muY3zWFwU8Nnh6Nkyblru0lXM6ls3e5fvN///X+W/KVPCkLFn67Xl0LXdpK+c0LJstXO8fG/LQOj7wqOHZaphOJqQhm1O39D2Nj4qDnnGbTU25S9v4wNOdZ68sNpmQRuzypMegl3qND0XlLm3jA09znlcN06ryMHHLNWfQS9v+/CiA7uUuTeMDTxOeGGlUk4fJnkbKoDdcZ6opd2kbH3iK86RIo7g8XJS79ga94w63mnKXtvGBJ5vniDSKyeOh3HUW++WurXvqCh7koqbcpW184EnmyZHGklOONNyXu56dCL14PuWhdMb4wJO6p1FCHCIHSmJDl7sc8Oz2PBgftzylhLEkqSRGucsHz2F5UKYyyVNaGknyUPXkLp4Elf21yfLgyV0meWpJYy2PqYk0Umcaz0JZCB54ukpjncmENEoOOmUheAYvdxWXB+UueOCxx9NDGldnyKfYk0bKAeZJUDff+/3b3Z7H59+Mj0GentJY9jx+TjdKCETTk7t4EtTTZN+q5Xh15ektjUUcIl8lsWtxhHKXf569C4XxGaLclSONy+Uib29vQUR+9p3f3u4e9PHHJWbNRbnLIM/DsoUnianm0TTT+JLG9f9t3qq9PmpsSyIxy5OPhoMe8z3ggccYj1ZprLP7h3F3ErH/5C544FHOY0EaUfL4EgflLnjgqcxjSRov5VFEGiUHnbIQPJS7VEjjqTyqSCNn0CkLweOQx7I0HuTRRBopg86ToOBxyONBGkuCfFLuGomnaEmM4xXN40Uay2vM8ywn+bYx8D0HmrIQPI54tJW7jopjeY15nq/P0g0iMi8lsahyWO2D3nq9Cg88laThbabxuGxZyWO1/1F/0HkSFDwOeUaQxq48qkqEJ0HB45BnJGlEyaOoREoeOC1lIXiG5xlRGknyyJJIzSmjlrIQPMPxjCyNQ/JIkkjLzSotZSF43PMgjUx57EqEJ0HB45AHaRSWx4NEeh30ZycBPPBk8iCNyvLI2hOp+dvjLPDAc4gHaTSWR1eJUF6CB2k0kUZVeTSVCOUleJBGU2k0kUdViVBeggdpdJFGU3kUlQjlJXgod3WVRhd5ZEmE8hI8BXiQhnF5JEmE8hI8BXiQhjN57EqE8hI8BXiQhnN5PEik10n47KSExxwP0mgjD5Gv92RRJxHKS/CwpyFac/N2k5fLBYlQpjLJgzQ6y2P1A4wnEcpUJnmQhjJ5DCURylQmeZCGcnm4lghlKpM8SMOYPFxJhDKVSR6kYVwepiVCmYpyF9LoLw9TEqFMZZIHaRiQxzzPEkIQlxLpdVE8u0jgecmDNIzJ4/ofXiVCmUo9D9IwLg8k0mhdT7lLjTSWix1pFJIHEql0kfa4aCl3MdPoIQ8kUukibXHRUu5CGhrkgUQaXWiUu5CGV3kgkUZTfMpdSMOrPIaWCOUuyl0kXx5DSYRyVxQP0kAeSEQom6XwIA3kgURK7YnU/G1PuQtpeJUHEmm0z8CTu5CGV3kgkUrS6CERpEF6yAOJVJJGC4kgDaJBHkik0YVPuQtpeJUHEmm05KDchTS8ymNoiVDuQhrIA4kkSYRyF9JAHjolsghEpUR6SeOZRJAG8SYP9xKh3IU0kAcSMSMRpEFGlAcSQRpIA3mokogWkdQsmyENgjyYiSANgjyQSAWJIA2CPJBIkkSQBkEeSCRJIkiDIA8kkiwRpEGQBxKxGKRBhpEHEkEaBHkgEaRBkAcSQRoEeSARVxJBGgR5IBGkQZAHEqkrDKRBkAcSQRoEeSARpEGQBxLpLBGkQZAHEkEaBHkgkXoSQRoEeSARpEGQBxKpJxGkQZAHEkmSCNIgyAOJJEkEaRDkgUSSJII0CPJAIjkSQRoEeSCRNkEaBHkgEaRBkAepJxGkQZAHEkEaBHmQehJBGgR5kCSJIA2CPEiSRJAGQR4kWSJIgxBCCCGEEEIIIYQQQgghhBBCCCGEEEIIIYQQQgghhBBCCCGEEEJa5P+d34Ya/bapgwAAAABJRU5ErkJggg==
-// @version     1.4.1
+// @version     1.4.2
 // @grant       none
 // ==/UserScript==
 
-/* global W, $, OL, I18n */
+/* global W, $, OpenLayers, I18n */
 
-// Based on the OpenLayers.Layer.Image class
-OL.Layer.OverlayImage = OL.Class(OL.Layer, {
-  isBaseLayer: false,
-  url: null,
-  extent: null,
-  size: null,
-  tile: null,
-  rotation: null,
-  key: null,
-  initialize: function(name, url, extent, size, key, options) {
-    options = options || {};
-    this.url = url;
-    this.extent = extent;
-    this.maxExtent = extent;
-    this.size = size;
-    this.key = key;
-    this.rotation = options.rotation || 0;
-    OL.Layer.prototype.initialize.apply(this, [name, options]);
-  },
-  destroy: function() {
-    if (this.tile) {
-      this.removeTileMonitoringHooks(this.tile);
-      this.tile.destroy();
-      this.tile = null;
-    }
-    OL.Layer.prototype.destroy.apply(this, arguments);
-  },
-  setMap: function(map) {
-    OL.Layer.prototype.setMap.apply(this, arguments);
-  },
-  moveTo:function(bounds, zoomChanged, dragging) {
-    OL.Layer.prototype.moveTo.apply(this, arguments);
-    var firstRendering = (this.tile == null);
-    if (zoomChanged || firstRendering) {
-      this.setTileSize();
-      var ulPx = this.map.getLayerPxFromLonLat({
-        lon: this.extent.left,
-        lat: this.extent.top
-      });
-
-      if (firstRendering) {
-        this.tile = new OL.Tile.Image(this, ulPx, this.extent, null, this.tileSize);
-        this.addTileMonitoringHooks(this.tile);
-      } else {
-        this.tile.size = this.tileSize.clone();
-        this.tile.position = ulPx.clone();
-      }
-      this.tile.draw();
-      this.setRotation(this.rotation);
-    }
-  },
-  shift: function(x, y) {
-    this.extent = this.extent.add(x, y);
-    var ulPx = this.map.getLayerPxFromLonLat({
-      lon: this.extent.left,
-      lat: this.extent.top
-    });
-    this.tile.position = ulPx.clone();
-    this.tile.positionTile();
-  },
-  scale: function(factor) {
-    this.extent = this.extent.scale(factor);
-    this.setTileSize();
-    var ulPx = this.map.getLayerPxFromLonLat({
-      lon: this.extent.left,
-      lat: this.extent.top
-    });
-    this.tile.position = ulPx.clone();
-    this.tile.size = this.tileSize.clone();
-    this.tile.positionTile();
-  },
-  stretch: function(horizontal, factor) {
-    var extent = this.extent.toArray();
-    var distance;
-    if (horizontal) {
-      distance = Math.abs(extent[2] - extent[0]) * (1-factor) / 2;
-      extent[0] += distance;
-      extent[2] -= distance;
-    } else {
-      distance = Math.abs(extent[1] - extent[3]) * (1-factor) / 2;
-      extent[1] += distance;
-      extent[3] -= distance;
-    }
-    this.extent = OL.Bounds.fromArray(extent);
-    this.setTileSize();
-    var ulPx = this.map.getLayerPxFromLonLat({
-      lon: this.extent.left,
-      lat: this.extent.top
-    });
-    this.tile.position = ulPx.clone();
-    this.tile.size = this.tileSize.clone();
-    this.tile.positionTile();
-  },
-  rotate: function(rotation) {
-    this.setRotation(this.rotation + rotation);
-  },
-  setTileSize: function() {
-    var tileWidth = this.extent.getWidth() / this.map.getResolution();
-    var tileHeight = this.extent.getHeight() / this.map.getResolution();
-    this.tileSize = new OL.Size(tileWidth, tileHeight);
-  },
-  addTileMonitoringHooks: function(tile) {
-    tile.onLoadStart = function() {
-      this.events.triggerEvent("loadstart");
-    };
-    tile.events.register("loadstart", this, tile.onLoadStart);
-    tile.onLoadEnd = function() {
-      this.events.triggerEvent("loadend");
-    };
-    tile.events.register("loadend", this, tile.onLoadEnd);
-    tile.events.register("unload", this, tile.onLoadEnd);
-  },
-  removeTileMonitoringHooks: function(tile) {
-    tile.unload();
-    tile.events.un({
-      "loadstart": tile.onLoadStart,
-      "loadend": tile.onLoadEnd,
-      "unload": tile.onLoadEnd,
-      scope: this
-    });
-  },
-  setUrl: function(newUrl) {
-    this.url = newUrl;
-    this.tile.draw();
-  },
-  getURL: function(bounds) {
-    return this.url;
-  },
-  setRotation: function(rotation) {
-    this.rotation = rotation;
-    this.tile.getTile().style.transform = 'rotate(' + rotation + 'deg)';
-  },
-  CLASS_NAME: "OpenLayers.Layer.OverlayImage"
-});
 var styleElement;
 
 function init(e) {
   if (e && e.user == null) {
     return;
+  }
+  if (OpenLayers == null) {
+    setTimeout(init, 500);
+    log('OpenLayers object not yet available, page still loading');
   }
   if (document.getElementById('user-info') == null) {
     setTimeout(init, 500);
@@ -168,6 +38,7 @@ function init(e) {
       return;
     }
   }
+  enrichOpenLayers();
 
   var io_strings = {
     en: {
@@ -743,7 +614,7 @@ function init(e) {
 
   function displayImageOverlay(overlay, rescale) {
     var url = window.URL.createObjectURL(overlay.blob);
-    overlay.extent = overlay.extent ? new OL.Bounds(overlay.extent) : W.map.getExtent();
+    overlay.extent = overlay.extent ? new OpenLayers.Bounds(overlay.extent) : W.map.getExtent();
     overlay.rotation = overlay.rotation || 0;
     var img = document.createElement('img');
     img.addEventListener('load', function() {
@@ -753,14 +624,14 @@ function init(e) {
         var imageAspectRatio = img.naturalWidth / img.naturalHeight;
         if (mapExtentAspectRatio > imageAspectRatio) {
           var widthDiff = overlay.extent.getWidth() - (overlay.extent.getHeight() * imageAspectRatio);
-          overlay.extent = new OL.Bounds([overlay.extent.left + widthDiff/2 , overlay.extent.bottom, overlay.extent.right - widthDiff/2, overlay.extent.top]);
+          overlay.extent = new OpenLayers.Bounds([overlay.extent.left + widthDiff/2 , overlay.extent.bottom, overlay.extent.right - widthDiff/2, overlay.extent.top]);
         } else {
           var heightDiff = overlay.extent.getHeight() - (overlay.extent.getWidth() / imageAspectRatio);
-          overlay.extent = new OL.Bounds([overlay.extent.left, overlay.extent.bottom + heightDiff/2, overlay.extent.right, overlay.extent.top - heightDiff/2]);
+          overlay.extent = new OpenLayers.Bounds([overlay.extent.left, overlay.extent.bottom + heightDiff/2, overlay.extent.right, overlay.extent.top - heightDiff/2]);
         }
         overlay.extent = overlay.extent.scale(0.8);
       }
-      layer = new OL.Layer.OverlayImage('Image Overlay', url, overlay.extent, new OL.Size(img.naturalWidth, img.naturalHeight), overlay.key, { 'rotation': overlay.rotation, 'opacity': overlay.opacity || 1 });
+      layer = new OpenLayers.Layer.OverlayImage('Image Overlay', url, overlay.extent, new OpenLayers.Size(img.naturalWidth, img.naturalHeight), overlay.key, { 'rotation': overlay.rotation, 'opacity': overlay.opacity || 1 });
       W.map.addLayer(layer);
       for (var i = 0; i < imagesList.childNodes.length; i++) {
         imagesList.childNodes[i].style.fontWeight = (imagesList.childNodes[i].dataset.key == overlay.key ? '700' : '');
@@ -862,6 +733,146 @@ function init(e) {
     document.body.appendChild(fileInput);
     fileInput.click();
   }
+}
+
+function enrichOpenLayers() {
+  if (OpenLayers.Layer.OverlayImage) {
+    return;
+  }
+  // Based on the OpenLayers.Layer.Image class
+  OpenLayers.Layer.OverlayImage = OpenLayers.Class(OpenLayers.Layer, {
+    isBaseLayer: false,
+    url: null,
+    extent: null,
+    size: null,
+    tile: null,
+    rotation: null,
+    key: null,
+    initialize: function(name, url, extent, size, key, options) {
+      options = options || {};
+      this.url = url;
+      this.extent = extent;
+      this.maxExtent = extent;
+      this.size = size;
+      this.key = key;
+      this.rotation = options.rotation || 0;
+      OpenLayers.Layer.prototype.initialize.apply(this, [name, options]);
+    },
+    destroy: function() {
+      if (this.tile) {
+        this.removeTileMonitoringHooks(this.tile);
+        this.tile.destroy();
+        this.tile = null;
+      }
+      OpenLayers.Layer.prototype.destroy.apply(this, arguments);
+    },
+    setMap: function(map) {
+      OpenLayers.Layer.prototype.setMap.apply(this, arguments);
+    },
+    moveTo:function(bounds, zoomChanged, dragging) {
+      OpenLayers.Layer.prototype.moveTo.apply(this, arguments);
+      var firstRendering = (this.tile == null);
+      if (zoomChanged || firstRendering) {
+        this.setTileSize();
+        var ulPx = this.map.getLayerPxFromLonLat({
+          lon: this.extent.left,
+          lat: this.extent.top
+        });
+
+        if (firstRendering) {
+          this.tile = new OpenLayers.Tile.Image(this, ulPx, this.extent, null, this.tileSize);
+          this.addTileMonitoringHooks(this.tile);
+        } else {
+          this.tile.size = this.tileSize.clone();
+          this.tile.position = ulPx.clone();
+        }
+        this.tile.draw();
+        this.setRotation(this.rotation);
+      }
+    },
+    shift: function(x, y) {
+      this.extent = this.extent.add(x, y);
+      var ulPx = this.map.getLayerPxFromLonLat({
+        lon: this.extent.left,
+        lat: this.extent.top
+      });
+      this.tile.position = ulPx.clone();
+      this.tile.positionTile();
+    },
+    scale: function(factor) {
+      this.extent = this.extent.scale(factor);
+      this.setTileSize();
+      var ulPx = this.map.getLayerPxFromLonLat({
+        lon: this.extent.left,
+        lat: this.extent.top
+      });
+      this.tile.position = ulPx.clone();
+      this.tile.size = this.tileSize.clone();
+      this.tile.positionTile();
+    },
+    stretch: function(horizontal, factor) {
+      var extent = this.extent.toArray();
+      var distance;
+      if (horizontal) {
+        distance = Math.abs(extent[2] - extent[0]) * (1-factor) / 2;
+        extent[0] += distance;
+        extent[2] -= distance;
+      } else {
+        distance = Math.abs(extent[1] - extent[3]) * (1-factor) / 2;
+        extent[1] += distance;
+        extent[3] -= distance;
+      }
+      this.extent = OpenLayers.Bounds.fromArray(extent);
+      this.setTileSize();
+      var ulPx = this.map.getLayerPxFromLonLat({
+        lon: this.extent.left,
+        lat: this.extent.top
+      });
+      this.tile.position = ulPx.clone();
+      this.tile.size = this.tileSize.clone();
+      this.tile.positionTile();
+    },
+    rotate: function(rotation) {
+      this.setRotation(this.rotation + rotation);
+    },
+    setTileSize: function() {
+      var tileWidth = this.extent.getWidth() / this.map.getResolution();
+      var tileHeight = this.extent.getHeight() / this.map.getResolution();
+      this.tileSize = new OpenLayers.Size(tileWidth, tileHeight);
+    },
+    addTileMonitoringHooks: function(tile) {
+      tile.onLoadStart = function() {
+        this.events.triggerEvent("loadstart");
+      };
+      tile.events.register("loadstart", this, tile.onLoadStart);
+      tile.onLoadEnd = function() {
+        this.events.triggerEvent("loadend");
+      };
+      tile.events.register("loadend", this, tile.onLoadEnd);
+      tile.events.register("unload", this, tile.onLoadEnd);
+    },
+    removeTileMonitoringHooks: function(tile) {
+      tile.unload();
+      tile.events.un({
+        "loadstart": tile.onLoadStart,
+        "loadend": tile.onLoadEnd,
+        "unload": tile.onLoadEnd,
+        scope: this
+      });
+    },
+    setUrl: function(newUrl) {
+      this.url = newUrl;
+      this.tile.draw();
+    },
+    getURL: function(bounds) {
+      return this.url;
+    },
+    setRotation: function(rotation) {
+      this.rotation = rotation;
+      this.tile.getTile().style.transform = 'rotate(' + rotation + 'deg)';
+    },
+    CLASS_NAME: "OpenLayers.Layer.OverlayImage"
+  });
 }
 
 function setTranslations(translations) {
