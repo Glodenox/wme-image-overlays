@@ -5,7 +5,7 @@
 // @description Makes it possible to add images as overlay on the Waze Map Editor
 // @include     /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor.*$/
 // @icon        data:image/png;base64,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
-// @version     1.4.5
+// @version     1.4.6
 // @grant       none
 // ==/UserScript==
 
@@ -55,7 +55,7 @@ function init(e) {
       empty_list: 'No images added yet',
       name_missing: 'No name specified',
       hide_overlay: 'Hide overlay',
-      opacity: 'Opacity',
+      opacity: 'Opacity:',
       parent_map_layer: 'Parent map layer',
       parent_map_layer_help: 'This decides on top of which map layer the image overlay will be drawn',
       layer_hidden: 'Hidden',
@@ -197,7 +197,7 @@ function init(e) {
       layerControls = document.createElement('div'),
       opacityRange = document.createElement('input'),
       opacityLabel = document.createElement('label'),
-      imageNameInput = document.createElement('input'),
+      imageNameInput = document.createElement('wz-text-input'),
       exportButton = document.createElement('button');
   panelTitle.appendChild(panelTitleIcon);
   panelTitle.appendChild(document.createTextNode(' '));
@@ -321,7 +321,7 @@ function init(e) {
   exportButton.addEventListener('click', exportLayer);
   layerControls.appendChild(exportButton);
   tab.appendChild(layerControls);
-  imageNameInput.className = 'form-control imageoverlays-margins';
+  imageNameInput.className = 'imageoverlays-margins';
   imageNameInput.placeholder = I18n.t('image_overlays.image_name');
 
   var editButtonsContainer = document.createElement('div');
@@ -360,26 +360,22 @@ function init(e) {
 
   function addImageOverlay(name, key, selected) {
     emptyList.classList.add('hidden');
-    var container = document.createElement('div');
-    container.dataset.key = key;
-    container.className = 'result session-available';
+    var overlayHandle = document.createElement('wz-card');
+    overlayHandle.className = 'list-item-card';
+    overlayHandle.dataset.key = key;
     if (selected) {
-      container.style.fontWeight = '700';
+      overlayHandle.style.fontWeight = '700';
     }
-    var remove = document.createElement('button');
-    remove.className = 'fa fa-trash-o remove';
-    remove.addEventListener('click', function(e) {
-      e.stopPropagation();
-      getIndexedDB(function(db) {
-        db.transaction(['overlays'], 'readwrite').objectStore('overlays').delete(key).addEventListener('success', function(e) {
-          container.parentNode.removeChild(container);
-          emptyList.classList.toggle('hidden', imagesList.childNodes.length > 0);
-          removeLayer();
-        });
-      });
-    });
-    container.appendChild(remove);
+    var container = document.createElement('div');
+    container.className = 'image-overlay-handle';
     var nameContainer = document.createElement('div');
+    if (name && name.length > 0) {
+      nameContainer.textContent = name;
+    } else {
+      nameContainer.style.fontStyle = 'italic';
+      nameContainer.textContent = I18n.t('image_overlays.name_missing');
+    }
+    container.appendChild(nameContainer);
     var editOverlay = document.createElement('button');
     editOverlay.className = 'fa fa-pencil rename';
     editOverlay.addEventListener('click', function(e) {
@@ -399,13 +395,19 @@ function init(e) {
       });
     });
     container.appendChild(editOverlay);
-    if (name && name.length > 0) {
-      nameContainer.textContent = name;
-    } else {
-      nameContainer.style.fontStyle = 'italic';
-      nameContainer.textContent = I18n.t('image_overlays.name_missing');
-    }
-    container.appendChild(nameContainer);
+    var remove = document.createElement('button');
+    remove.className = 'fa fa-trash-o remove';
+    remove.addEventListener('click', function(e) {
+      e.stopPropagation();
+      getIndexedDB(function(db) {
+        db.transaction(['overlays'], 'readwrite').objectStore('overlays').delete(key).addEventListener('success', function(e) {
+          overlayHandle.parentNode.removeChild(overlayHandle);
+          emptyList.classList.toggle('hidden', imagesList.childNodes.length > 0);
+          removeLayer();
+        });
+      });
+    });
+    container.appendChild(remove);
     container.addEventListener('click', function() {
       if (layer && layer.key && layer.key == key) {
         removeLayer();
@@ -419,7 +421,8 @@ function init(e) {
         });
       }
     });
-    imagesList.appendChild(container);
+    overlayHandle.appendChild(container);
+    imagesList.appendChild(overlayHandle);
   }
 
   function updateParentLayer(currentLayer) {
@@ -551,12 +554,13 @@ function init(e) {
     instructions.appendChild(createControlButton('minus', function() {
       layer.stretch(false, 1 - (0.01 * scale.value/100));
     }));
-    instructions.appendChild(document.createElement('br'));
+    var sensitivityContainer = document.createElement('div');
+    sensitivityContainer.className = 'imageoverlays-sensitivity';
     scale.id = 'imageoverlays-control-sensitivity';
     var controlSensitivity = document.createElement('label');
     controlSensitivity.textContent = I18n.t('image_overlays.control_sensitivity');
     controlSensitivity.htmlFor = scale.id;
-    instructions.appendChild(controlSensitivity);
+    sensitivityContainer.appendChild(controlSensitivity);
     var sensitivity = document.createElement('span');
     sensitivity.textContent = '100%';
     scale.type = 'range';
@@ -566,8 +570,9 @@ function init(e) {
     scale.addEventListener('input', function() {
       sensitivity.textContent = scale.value + '%';
     });
-    instructions.appendChild(scale);
-    instructions.appendChild(sensitivity);
+    sensitivityContainer.appendChild(scale);
+    sensitivityContainer.appendChild(sensitivity);
+    instructions.appendChild(sensitivityContainer);
     imageNameInput.value = overlay.name || currentBlob.name;
     instructions.appendChild(imageNameInput);
   }
@@ -976,9 +981,21 @@ h3.image-overlays-panel-title {
   text-align: center;
 }
 
-#sidepanel-imageoverlays .result-list .result {
-  border-radius: 6px;
-  border: 1px solid #d5d7db;
+#sidepanel-imageoverlays .result-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+#sidepanel-imageoverlays .image-overlay-handle {
+  display: flex;
+  font-size: 14px;
+  align-items: center;
+  gap: 3px;
+}
+
+#sidepanel-imageoverlays .image-overlay-handle div:first-child {
+  flex-grow: 1;
 }
 
 #sidepanel-imageoverlays .cancel {
@@ -995,6 +1012,19 @@ h3.image-overlays-panel-title {
   display: inline;
   margin: 5px;
   vertical-align: bottom;
+}
+
+#sidepanel-imageoverlays .imageoverlays-sensitivity {
+  display: flex;
+  align-items: center;
+}
+
+#sidepanel-imageoverlays .imageoverlays-sensitivity label {
+  margin-bottom: 0;
+}
+
+#sidepanel-imageoverlays #imageOverlaysParentLayer {
+  background-color: var(--background_variant, #f2f4f7);
 }
 
 #sidepanel-imageoverlays p:last-child {
