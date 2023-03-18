@@ -858,23 +858,17 @@ function setTranslations(translations) {
   }
 }
 
-// Create a tab and possibly receive a previous tab to restore (usually in case of a mode change)
+// Create the tab
 async function addTab() {
-  var tab = document.createElement('div');
-  tab.id = 'sidepanel-imageoverlays';
-  tab.style.position = 'relative';
-
   const {tabLabel, tabPane} = W.userscripts.registerSidebarTab("imageoverlays");
 
   tabLabel.innerHTML = '<span class="fa fa-picture-o"></span>';
   tabLabel.title = I18n.t('image_overlays.tab_title');
-  tabPane.innerHTML = tab.outerHTML;
+  tabPane.id = 'sidepanel-imageoverlays';
 
   await W.userscripts.waitForElementConnected(tabPane);
 
-  tab = document.getElementById('sidepanel-imageoverlays');
-
-  return Promise.resolve(tab);
+  return Promise.resolve(tabPane);
 }
 
 function createControlButton(icon, callback, text) {
@@ -1025,25 +1019,23 @@ h3.image-overlays-panel-title {
   }
 }
 
-    function onWmeInitialized() {
-        if (W.userscripts?.state?.isReady) {
-            log('W is ready and in "wme-ready" state. Proceeding with initialization.');
-            onWmeReady();
-        }
-        else {
-            log('W is ready, but not in "wme-ready" state. Adding event listener.');
-            document.addEventListener('wme-ready', onWmeReady, { once: true });
-        }
-    }
+function onWmeInitialized() {
+  if (W.userscripts?.state?.isReady) {
+    log('W is ready and in "wme-ready" state. Proceeding with initialization.');
+    onWmeReady();
+  } else {
+    log('W is ready, but not in "wme-ready" state. Adding event listener.');
+    document.addEventListener('wme-ready', onWmeReady, { once: true });
+  }
+}
 
-    function bootstrap() {
-        if (!W) {
-            log('W is not available. Adding event listener.');
-            document.addEventListener('wme-initialized', onWmeInitialized, { once: true });
-        }
-        else {
-            onWmeInitialized();
-        }
-    }
+function bootstrap() {
+  if (!W) {
+    log('W is not available. Adding event listener.');
+    document.addEventListener('wme-initialized', onWmeInitialized, { once: true });
+  } else {
+    onWmeInitialized();
+  }
+}
 
 bootstrap();
