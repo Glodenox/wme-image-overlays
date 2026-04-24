@@ -10,7 +10,7 @@
 // @require     https://cdn.jsdelivr.net/npm/@turf/turf@7.2.0/turf.min.js
 // ==/UserScript==
 
-/* global I18n, wmeSDK, turf */
+/* global I18n, getWmeSdk, turf */
 
 let wmeSDK;
 window.SDK_INITIALIZED.then(() => {
@@ -20,8 +20,66 @@ window.SDK_INITIALIZED.then(() => {
 
 let styleElement;
 
-const LAYER_NAME = "overlay_layer";
 let activeFeature = null;
+
+const LAYER = function() {
+  const LAYER_NAME = "overlay_layer";
+  const FEATURE_ID = "overlay_feature";
+  const addLayer = () => {
+    wmeSDK.Map.addLayer({
+      layerName: LAYER_NAME,
+      styleContext: {
+        url: ({ feature }) => feature.properties.url,
+        width: ({ feature }) => wmeSDK.Map.getPixelFromLonLat({ lonLat: pointToLonLat(feature.properties.rightTop) }).x - wmeSDK.Map.getPixelFromLonLat({ lonLat: pointToLonLat(feature.properties.leftBottom) }).x,
+        height: ({ feature }) => wmeSDK.Map.getPixelFromLonLat({ lonLat: pointToLonLat(feature.properties.leftBottom) }).y - wmeSDK.Map.getPixelFromLonLat({ lonLat: pointToLonLat(feature.properties.rightTop) }).y, // y pixel locations calculated from topleft corner
+        rotation: ({ feature }) => feature.properties.rotation,
+        opacity: ({ feature }) => feature.properties.opacity
+      },
+      styleRules: [
+        {
+          style: {
+            externalGraphic: "${url}",
+            fillOpacity: 1,
+            graphicWidth: "${width}",
+            graphicHeight: "${height}",
+            graphicOpacity: "${opacity}",
+            rotation: "${rotation}"
+          }
+        }
+      ]
+    });
+    layerExists = true;
+  };
+  let layerExists = false;
+  return {
+    remove: () => {
+      if (!layerExists) return;
+      wmeSDK.Map.removeLayer({ layerName: LAYER_NAME });
+      layerExists = false;
+    },
+    exists: () => layerExists,
+    redraw: () => wmeSDK.Map.redrawLayer({ layerName: LAYER_NAME }),
+    addFeature: (feature) => {
+      if (!layerExists) {
+        addLayer();
+      } else {
+        wmeSDK.Map.removeFeatureFromLayer({ layerName: LAYER_NAME, featureId: FEATURE_ID });
+      }
+      feature.id = FEATURE_ID;
+      wmeSDK.Map.addFeatureToLayer({ layerName: LAYER_NAME, feature: feature });
+    },
+    setZIndex: (targetLayer) => {
+      let targetIndex = null;
+      try {
+        targetIndex = wmeSDK.Map.getLayerZIndex({ layerName: targetLayer }) - 5;
+      } catch (e) {
+        alert("It would seem that the parent layer '" + targetLayer + "' no longer exists in the WME. Reverting to 'roads'. Please report this at https://www.waze.com/discuss/t/script-wme-image-overlays-1-5-4/129015");
+        targetIndex = wmeSDK.Map.getLayerZIndex({ layerName: "roads" }) - 5;
+      }
+      wmeSDK.Map.setLayerZIndex({ layerName: LAYER_NAME, zIndex: targetIndex });
+    }
+  };
+}();
 
 async function onWmeReady() {
   setTranslations();
@@ -78,7 +136,7 @@ async function onWmeReady() {
   const importError = document.createElement('p');
   importError.className = 'hidden text-danger';
   importError.textContent = I18n.t('image_overlays.import_error');
-  const pasteListener = function(e) {
+  const pasteListener = (e) => {
     for (let item of e.clipboardData.items) {
       if (item.kind == 'file' && item.type.indexOf('image/') !== -1) {
         const blob = item.getAsFile();
@@ -186,13 +244,13 @@ async function onWmeReady() {
           data.opacity = opacityRange.value / 50;
           objectStore.put(data, layer.key).addEventListener('success', () => {
             activeFeature.properties.opacity = opacityRange.value / 50;
-            wmeSDK.Map.redrawLayer({ layerName: LAYER_NAME });
+            LAYER.redraw();
           });
         });
       });
     } else if (activeFeature) {
       activeFeature.properties.opacity = opacityRange.value / 50;
-      wmeSDK.Map.redrawLayer({ layerName: LAYER_NAME });
+      LAYER.redraw();
     }
   };
   opacityRange.addEventListener('input', rangeListener);
@@ -214,28 +272,19 @@ async function onWmeReady() {
   parentLayer.add(new Option("Restricted Areas", "restricted_driving_areas_names"));
   parentLayer.add(new Option("Permanent Hazards", "permanent_hazard_camera_markers"));
   parentLayer.add(new Option("Closures", "closures"));
-  let moveImageOverlayLayer = () => {
-    let targetIndex = null;
-    if (parentLayer.value == 'under-roads-layer') {
-      targetIndex = wmeSDK.Map.getLayerZIndex({ layerName: 'roads' }) - 5;
-    } else {
-      targetIndex = wmeSDK.Map.getLayerZIndex({ layerName: parentLayer.value }) + 5;
-    }
-    wmeSDK.Map.setLayerZIndex({ layerName: LAYER_NAME, zIndex: targetIndex });
-  };
   parentLayer.addEventListener('change', () => {
     // Store new information, if needed
     if (activeFeature && activeFeature.properties.key) {
       getIndexedDB((db) => {
         var objectStore = db.transaction(['overlays'], 'readwrite').objectStore('overlays');
-        objectStore.get(layer.key).addEventListener('success', (e) => {
+        objectStore.get(activeFeature.properties.key).addEventListener('success', (e) => {
           var data = e.target.result;
           data.layerTarget = parentLayer.value;
-          objectStore.put(data, activeFeature.properties.key).addEventListener('success', moveImageOverlayLayer);
+          objectStore.put(data, activeFeature.properties.key).addEventListener('success', () => LAYER.setZIndex(parentLayer.value));
         });
       });
     } else if (activeFeature) {
-      moveImageOverlayLayer();
+      LAYER.setZIndex(parentLayer.value);
     }
   });
   var parentLayerLabel = document.createElement('label');
@@ -265,7 +314,7 @@ async function onWmeReady() {
   cancelButtonIcon.className = 'fa fa-trash-o fa-fw';
   cancelButton.appendChild(cancelButtonIcon);
   cancelButton.appendChild(document.createTextNode(I18n.t('image_overlays.cancel')));
-  cancelButton.addEventListener('click', function() {
+  cancelButton.addEventListener('click', () => {
     editPanel.classList.add('hidden');
     editButtonsContainer.classList.add('hidden');
     exportButton.classList.remove('hidden');
@@ -312,9 +361,9 @@ async function onWmeReady() {
     editOverlay.className = 'fa fa-pencil rename';
     editOverlay.addEventListener('click', (e) => {
       e.stopPropagation();
-      getIndexedDB(function(db) {
+      getIndexedDB((db) => {
         var objectStore = db.transaction(['overlays'], 'readwrite').objectStore('overlays');
-        objectStore.get(key).addEventListener('success', function(e) {
+        objectStore.get(key).addEventListener('success', (e) => {
           var data = e.target.result;
           editPanel.classList.remove('hidden');
           overlayControls.classList.add('hidden');
@@ -334,19 +383,19 @@ async function onWmeReady() {
         db.transaction(['overlays'], 'readwrite').objectStore('overlays').delete(key).addEventListener('success', () => {
           overlayHandle.parentNode.removeChild(overlayHandle);
           emptyList.classList.toggle('hidden', imagesList.childNodes.length > 0);
-          removeLayer();
+          LAYER.remove();
         });
       });
     });
     container.appendChild(remove);
     overlayHandle.addEventListener('click', (e) => {
-      if (!removeLayer()) {
-        getIndexedDB(function(db) {
-          db.transaction(['overlays'], 'readonly').objectStore('overlays').get(key).addEventListener('success', (e) => displayImageOverlay(e.target.result));
+      getIndexedDB((db) => {
+        db.transaction(['overlays'], 'readonly').objectStore('overlays').get(key).addEventListener('success', (e) => {
+          let overlay = e.target.result;
+          overlay.key = key;
+          displayImageOverlay(overlay);
         });
-      } else {
-        activeFeature = null;
-      }
+      });
     });
     overlayHandle.appendChild(container);
     imagesList.appendChild(overlayHandle);
@@ -362,14 +411,12 @@ async function onWmeReady() {
     document.addEventListener('paste', pasteListener);
     panelTitleIcon.className = 'fa fa-download';
     panelTitleText.textContent = I18n.t('image_overlays.import_image');
-    removeLayer();
-
     description.textContent = I18n.t('image_overlays.import_image_description');
     var addImageInput = document.createElement('input');
     addImageInput.type = 'file';
     addImageInput.accepts = 'image/*';
     addImageInput.className = 'center-block';
-    addImageInput.addEventListener('change', function() {
+    addImageInput.addEventListener('change', () => {
       displayAlignPage({
         blob: addImageInput.files[0]
       });
@@ -386,7 +433,7 @@ async function onWmeReady() {
     editPanel.classList.remove('hidden');
   }
 
-  function displayAlignPage(overlay, key) {
+  function displayAlignPage(overlay) {
     pinToMapButton.data.blob = overlay.blob;
     document.removeEventListener('paste', pasteListener);
     panelTitleIcon.className = 'fa fa-arrows-alt';
@@ -395,47 +442,46 @@ async function onWmeReady() {
     exportButton.classList.add('hidden');
     pinToMapButton.classList.remove('hidden');
 
-    // TODO: probably move this key into the overlay object, but then any storing of object will need to remove the key from the object again
-    displayImageOverlay(overlay, key);
+    displayImageOverlay(overlay);
 
     description.textContent = I18n.t('image_overlays.align_image_description');
     var scale = document.createElement('input');
     let numZoomLevels = W.map.getLayersBy("isBaseLayer", true)[0].numZoomLevels;
     instructions.textContent = '';
-    instructions.appendChild(createControlButton('rotate-left', function() {
+    instructions.appendChild(createControlButton('rotate-left', () => {
       layer.rotate(-45);
     }, '45°'));
-    instructions.appendChild(createControlButton('rotate-left', function() {
+    instructions.appendChild(createControlButton('rotate-left', () => {
       layer.rotate(-0.5 * scale.value/100);
     }));
-    instructions.appendChild(createControlButton('arrow-up', function() {
+    instructions.appendChild(createControlButton('arrow-up', () => {
       layer.shift(0, 10 * W.map.getResolution() * scale.value/100);
     }));
-    instructions.appendChild(createControlButton('rotate-right', function() {
+    instructions.appendChild(createControlButton('rotate-right', () => {
       layer.rotate(0.5 * scale.value/100);
     }));
-    instructions.appendChild(createControlButton('rotate-right', function() {
+    instructions.appendChild(createControlButton('rotate-right', () => {
       layer.rotate(45);
     }, '45°'));
     instructions.appendChild(document.createElement('br'));
-    instructions.appendChild(createControlButton('arrow-left', function() {
+    instructions.appendChild(createControlButton('arrow-left', () => {
       layer.shift(-10 * W.map.getResolution() * scale.value/100, 0);
     }));
-    instructions.appendChild(createControlButton('crosshairs', function() {
+    instructions.appendChild(createControlButton('crosshairs', () => {
       var layerCenter = layer.extent.getCenterLonLat();
       layer.shift(W.map.getCenter().lon - layerCenter.lon, W.map.getCenter().lat - layerCenter.lat);
     }));
-    instructions.appendChild(createControlButton('arrow-right', function() {
+    instructions.appendChild(createControlButton('arrow-right', () => {
       layer.shift(10 * W.map.getResolution() * scale.value/100, 0);
     }));
     instructions.appendChild(document.createElement('br'));
-    instructions.appendChild(createControlButton('compress', function() {
+    instructions.appendChild(createControlButton('compress', () => {
       layer.scale(1 - 0.01 * (numZoomLevels-W.map.getZoom()) * scale.value/100);
     }));
-    instructions.appendChild(createControlButton('arrow-down', function() {
+    instructions.appendChild(createControlButton('arrow-down', () => {
       layer.shift(0, -10 * W.map.getResolution() * scale.value/100);
     }));
-    instructions.appendChild(createControlButton('expand', function() {
+    instructions.appendChild(createControlButton('expand', () => {
       layer.scale(1 + 0.01 * (numZoomLevels-W.map.getZoom()) * scale.value/100);
     }));
     instructions.appendChild(document.createElement('br'));
@@ -446,10 +492,10 @@ async function onWmeReady() {
     horizontalStretchLabelIcon.className = 'fa fa-arrows-h';
     horizontalStretchLabelIcon.style.marginRight = '10px';
     instructions.appendChild(horizontalStretchLabelIcon);
-    instructions.appendChild(createControlButton('plus', function() {
+    instructions.appendChild(createControlButton('plus', () => {
       layer.stretch(true, 1 + (0.01 * scale.value/100));
     }));
-    instructions.appendChild(createControlButton('minus', function() {
+    instructions.appendChild(createControlButton('minus', () => {
       layer.stretch(true, 1 - (0.01 * scale.value/100));
     }));
     var verticalStretchLabelIcon = document.createElement('i');
@@ -457,10 +503,10 @@ async function onWmeReady() {
     verticalStretchLabelIcon.className = 'fa fa-arrows-v';
     verticalStretchLabelIcon.style.marginLeft = '10px';
     instructions.appendChild(verticalStretchLabelIcon);
-    instructions.appendChild(createControlButton('plus', function() {
+    instructions.appendChild(createControlButton('plus', () => {
       layer.stretch(false, 1 + (0.01 * scale.value/100));
     }));
-    instructions.appendChild(createControlButton('minus', function() {
+    instructions.appendChild(createControlButton('minus', () => {
       layer.stretch(false, 1 - (0.01 * scale.value/100));
     }));
     var sensitivityContainer = document.createElement('div');
@@ -476,7 +522,7 @@ async function onWmeReady() {
     scale.min = 0;
     scale.value = 100;
     scale.max = 200;
-    scale.addEventListener('input', function() {
+    scale.addEventListener('input', () => {
       sensitivity.textContent = scale.value + '%';
     });
     sensitivityContainer.appendChild(scale);
@@ -487,6 +533,7 @@ async function onWmeReady() {
   }
 
   function pinToMap() {
+    // TODO: adjust activeFeature instead of creating an object
     var obj = {
       'blob': pinToMapButton.data.blob,
       'name': imageNameInput.value,
@@ -495,7 +542,8 @@ async function onWmeReady() {
       'opacity': opacityRange.value / 50,
       'layerTarget': parentLayer.value
     };
-    storeOverlay(obj, (e) => {
+    editButtonsContainer.classList.add('hidden');
+    storeActiveOverlay((e) => {
       editPanel.classList.add('hidden');
       exportButton.classList.remove('hidden');
       overlayControls.classList.remove('hidden');
@@ -505,63 +553,61 @@ async function onWmeReady() {
           imagesList.removeChild(imagesList.childNodes[i]);
         }
       }
-      activeFeature.properties.key = e.target.result;
       addImageOverlay(obj.name, e.target.result, true);
     });
-    editButtonsContainer.classList.add('hidden');
   }
 
-  function storeOverlay(overlay, callback) {
-    getIndexedDB(function(db) {
+  function storeActiveOverlay(callback) {
+    const overlay = createStorageObjectFromActiveFeature();
+    let updateActiveFeature = (e) => {
+      activeFeature.properties.key = e.target.result;
+      callback(e);
+    };
+    getIndexedDB((db) => {
       if (activeFeature.properties.key) {
         db.transaction(['overlays'], 'readwrite').objectStore('overlays').put(overlay, activeFeature.properties.key).addEventListener('success', callback);
       } else {
-        db.transaction(['overlays'], 'readwrite').objectStore('overlays').add(overlay).addEventListener('success', callback);
+        db.transaction(['overlays'], 'readwrite').objectStore('overlays').add(overlay).addEventListener('success', updateActiveFeature);
       }
     });
   }
 
-  function displayImageOverlay(overlay, key) {
+  function createStorageObjectFromActiveFeature() {
+    return {
+      'blob': activeFeature.properties.blob,
+      'name': activeFeature.properties.name,
+      'extent': activeFeature.properties.extent,
+      'rotation': activeFeature.properties.rotation,
+      'opacity': activeFeature.properties.opacity,
+      'layerTarget': activeFeature.properties.layerTarget
+    };
+  }
+
+  function displayImageOverlay(overlay) {
     const img = document.createElement('img');
-    img.addEventListener('load', function() {
-      removeLayer();
-      wmeSDK.Map.addLayer({
-        layerName: LAYER_NAME,
-        styleContext: {
-          url: ({ feature }) => feature.properties.url,
-          width: ({ feature }) => wmeSDK.Map.getPixelFromLonLat({ lonLat: pointToLonLat(feature.properties.rightTop) }).x - wmeSDK.Map.getPixelFromLonLat({ lonLat: pointToLonLat(feature.properties.leftBottom) }).x,
-          height: ({ feature }) => wmeSDK.Map.getPixelFromLonLat({ lonLat: pointToLonLat(feature.properties.leftBottom) }).y - wmeSDK.Map.getPixelFromLonLat({ lonLat: pointToLonLat(feature.properties.rightTop) }).y, // y pixel locations calculated from topleft corner
-          rotation: ({ feature }) => feature.properties.rotation,
-          opacity: ({ feature }) => feature.properties.opacity
-        },
-        styleRules: [
-          {
-            style: {
-              externalGraphic: "${url}",
-              fillOpacity: 1,
-              graphicWidth: "${width}",
-              graphicHeight: "${height}",
-              graphicOpacity: "${opacity}",
-              rotation: "${rotation}"
-            }
-          }
-        ]
-      });
+    img.addEventListener('load', () => {
       let imageExtent = turf.toWgs84(turf.bboxPolygon(overlay.extent));
       let imageBbox = turf.bbox(imageExtent, { recompute: true });
-      let feature = turf.point([ (imageBbox[0] + imageBbox[2]) / 2, (imageBbox[1] + imageBbox[3]) / 2 ], {
+      let featureProperties = {
+        // OpenLayers data
         url: img.src,
         leftBottom: turf.point(imageBbox.slice(0, 2)),
         rightTop: turf.point(imageBbox.slice(2, 4)),
-        rotation: overlay.rotation || 0,
-        opacity: overlay.opacity || 1,
-        key: overlay.key
-      }, {
-        id: 'image_overlay'
-      });
-      wmeSDK.Map.addFeatureToLayer({ layerName: LAYER_NAME, feature: feature });
+        // IndexedDB data
+        blob: overlay.blob,
+        name: overlay.name,
+        extent: overlay.extent,
+        rotation: overlay.rotation,
+        opacity: overlay.opacity,
+        layerTarget: overlay.layerTarget
+      };
+      if (activeFeature.properties.key) {
+        featureProperties.key = activeFeature.properties.key;
+      }
+      let feature = turf.point([ (imageBbox[0] + imageBbox[2]) / 2, (imageBbox[1] + imageBbox[3]) / 2 ], featureProperties);
+      LAYER.addFeature(feature);
       activeFeature = feature;
-      if (key) {
+      if (overlay.key) {
         // Reset all image names
         for (var i = 0; i < imagesList.childNodes.length; i++) {
           imagesList.childNodes[i].style.fontWeight = (imagesList.childNodes[i].dataset.key == overlay.key ? '700' : '');
@@ -576,14 +622,7 @@ async function onWmeReady() {
       if (parentLayer.value == 'under-roads-layer' || !parentLayer.checkValidity()) {
         parentLayer.value = 'roads';
       }
-      let targetLayerIndex = null;
-      try {
-        targetLayerIndex = wmeSDK.Map.getLayerZIndex({ layerName: parentLayer.value });
-      } catch (e) {
-        alert("It would seem that the parent layer '" + parentLayer.value + "' no longer exists in the WME. Reverting to 'roads'. Please report this at https://www.waze.com/discuss/t/script-wme-image-overlays-1-5-4/129015");
-        targetLayerIndex = wmeSDK.Map.getLayerZIndex({ layerName: "roads" });
-      }
-      wmeSDK.Map.setLayerZIndex({ layerName: LAYER_NAME, zIndex: targetLayerIndex - 5 });
+      LAYER.setZIndex(parentLayer.value);
       if (!turf.booleanIntersects(imageExtent, turf.bboxPolygon(wmeSDK.Map.getMapExtent()))) {
         wmeSDK.Map.zoomToExtent({ bbox: imageBbox });
       }
@@ -593,62 +632,45 @@ async function onWmeReady() {
   }
 
   function removeLayer() {
-    try {
-      activeFeature = null;
-      wmeSDK.Map.removeLayer({ layerName: LAYER_NAME });
-      layerControls.classList.add('hidden');
-      hideOverlayButton.classList.add('hidden');
-      importButton.classList.remove('hidden');
-      for (var i = 0; i < imagesList.childNodes.length; i++) {
-        imagesList.childNodes[i].style.fontWeight = '';
-      }
-      return true;
-    } catch(e) {
-      return false;
+    activeFeature = null;
+    LAYER.remove();
+    layerControls.classList.add('hidden');
+    hideOverlayButton.classList.add('hidden');
+    importButton.classList.remove('hidden');
+    for (var i = 0; i < imagesList.childNodes.length; i++) {
+      imagesList.childNodes[i].style.fontWeight = '';
     }
   }
 
   function exportLayer() {
-    if (layer && layer.key) {
-      getIndexedDB(function(db) {
-        db.transaction(['overlays'], 'readonly').objectStore('overlays').get(layer.key).addEventListener('success', function(e) {
-          var downloadPrompt = function(data) {
-            var download = document.createElement('a');
-            download.download = data.name.replace(/[/\\?%*:|"<>\.$#,= ]/g, '-') + '.json'; // Transform all commonly reserved file name characters to dashes
-            download.style.display = 'none';
-            download.rel = 'noopener';
-            var bytes = new TextEncoder().encode(JSON.stringify(data));
-            download.href = URL.createObjectURL(new Blob([bytes], { type: "application/json;charset=utf-8" }));
-            document.body.appendChild(download);
-            download.click();
-            setTimeout(function() { URL.revokeObjectURL(download.href) }, 30000);
-            document.body.removeChild(download);
-          };
-          var result = e.target.result;
-          if (result.blob) {
-            var fileReader = new FileReader();
-            fileReader.addEventListener('load', function() {
-              result.blob = fileReader.result;
-              downloadPrompt(result);
-            });
-            fileReader.readAsDataURL(result.blob);
-          } else {
-            downloadPrompt(result);
-          }
-        });
+    if (activeFeature) {
+      const fileReader = new FileReader();
+      fileReader.addEventListener('load', () => {
+        let data = createStorageObjectFromActiveFeature();
+        data.blob = fileReader.result;
+        var download = document.createElement('a');
+        download.download = data.name.replace(/[/\\?%*:|"<>\.$#,= ]/g, '-') + '.json'; // Transform all commonly reserved file name characters to dashes
+        download.style.display = 'none';
+        download.rel = 'noopener';
+        var bytes = new TextEncoder().encode(JSON.stringify(data));
+        download.href = URL.createObjectURL(new Blob([bytes], { type: "application/json;charset=utf-8" }));
+        document.body.appendChild(download);
+        download.click();
+        setTimeout(() => { URL.revokeObjectURL(download.href) }, 30000);
+        document.body.removeChild(download);
       });
+      fileReader.readAsDataURL(activeFeature.properties.blob);
     }
   }
 
-  // Request file to import, then process it
   function importLayer() {
     var fileInput = document.createElement('input');
     fileInput.type = 'file';
     fileInput.accept = '.json';
     fileInput.style.display = 'none';
-    fileInput.addEventListener('change', function() {
+    fileInput.addEventListener('change', () => {
       var fileReader = new FileReader();
-      fileReader.addEventListener('load', function() {
+      fileReader.addEventListener('load', () => {
         document.body.removeChild(fileInput);
         var result = JSON.parse(fileReader.result);
         if (result.blob) {
@@ -662,10 +684,9 @@ async function onWmeReady() {
           }
           result.blob = new File([ arrayBuffer ], result.name, { type: mimeType });
         }
-        storeOverlay(result, function(e) {
-          removeLayer();
-          addImageOverlay(result.name, e.target.result, true);
+        storeActiveOverlay(result, (e) => {
           result.key = e.target.result;
+          addImageOverlay(result.name, e.target.result, true);
           displayImageOverlay(result);
         });
       });
@@ -791,7 +812,7 @@ function createControlButton(icon, callback, text) {
 
 function getIndexedDB(callback) {
   var req = indexedDB.open('ImageOverlays', 1);
-  req.addEventListener('upgradeneeded', function(e) {
+  req.addEventListener('upgradeneeded', (e) => {
     if (e.oldVersion) {
       log('upgradeneeded event triggered again? Old version: ' + e.oldVersion);
       log(e);
