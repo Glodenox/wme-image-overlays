@@ -236,20 +236,18 @@ async function onWmeReady() {
   layerControls.appendChild(opacityLabel);
   layerControls.appendChild(opacityRange);
   var rangeListener = () => {
-    if (activeFeature && activeFeature.properties.key) {
+    if (!activeFeature) { return; }
+    activeFeature.properties.opacity = opacityRange.value / 50;
+    if (activeFeature.properties.key) {
       getIndexedDB((db) => {
         var objectStore = db.transaction(['overlays'], 'readwrite').objectStore('overlays');
         objectStore.get(activeFeature.properties.key).addEventListener('success', (e) => {
           var data = e.target.result;
           data.opacity = opacityRange.value / 50;
-          objectStore.put(data, layer.key).addEventListener('success', () => {
-            activeFeature.properties.opacity = opacityRange.value / 50;
-            LAYER.redraw();
-          });
+          objectStore.put(data, layer.key).addEventListener('success', LAYER.redraw);
         });
       });
-    } else if (activeFeature) {
-      activeFeature.properties.opacity = opacityRange.value / 50;
+    } else {
       LAYER.redraw();
     }
   };
@@ -273,8 +271,9 @@ async function onWmeReady() {
   parentLayer.add(new Option("Permanent Hazards", "permanent_hazard_camera_markers"));
   parentLayer.add(new Option("Closures", "closures"));
   parentLayer.addEventListener('change', () => {
-    // Store new information, if needed
-    if (activeFeature && activeFeature.properties.key) {
+    if (!activeFeature) { return; }
+    activeFeature.properties.layerTarget = parentLayer.value;
+    if (activeFeature.properties.key) {
       getIndexedDB((db) => {
         var objectStore = db.transaction(['overlays'], 'readwrite').objectStore('overlays');
         objectStore.get(activeFeature.properties.key).addEventListener('success', (e) => {
@@ -283,7 +282,7 @@ async function onWmeReady() {
           objectStore.put(data, activeFeature.properties.key).addEventListener('success', () => LAYER.setZIndex(parentLayer.value));
         });
       });
-    } else if (activeFeature) {
+    } else {
       LAYER.setZIndex(parentLayer.value);
     }
   });
@@ -343,7 +342,6 @@ async function onWmeReady() {
     emptyList.classList.add('hidden');
     var overlayHandle = document.createElement('wz-card');
     overlayHandle.className = 'list-item-card';
-    overlayHandle.dataset.key = key;
     if (selected) {
       overlayHandle.style.fontWeight = '700';
     }
@@ -434,7 +432,6 @@ async function onWmeReady() {
   }
 
   function displayAlignPage(overlay) {
-    pinToMapButton.data.blob = overlay.blob;
     document.removeEventListener('paste', pasteListener);
     panelTitleIcon.className = 'fa fa-arrows-alt';
     panelTitleText.textContent = I18n.t('image_overlays.align_image');
@@ -448,42 +445,22 @@ async function onWmeReady() {
     var scale = document.createElement('input');
     let numZoomLevels = W.map.getLayersBy("isBaseLayer", true)[0].numZoomLevels;
     instructions.textContent = '';
-    instructions.appendChild(createControlButton('rotate-left', () => {
-      layer.rotate(-45);
-    }, '45°'));
-    instructions.appendChild(createControlButton('rotate-left', () => {
-      layer.rotate(-0.5 * scale.value/100);
-    }));
-    instructions.appendChild(createControlButton('arrow-up', () => {
-      layer.shift(0, 10 * W.map.getResolution() * scale.value/100);
-    }));
-    instructions.appendChild(createControlButton('rotate-right', () => {
-      layer.rotate(0.5 * scale.value/100);
-    }));
-    instructions.appendChild(createControlButton('rotate-right', () => {
-      layer.rotate(45);
-    }, '45°'));
+    instructions.appendChild(createControlButton('rotate-left', layerModificationProxy(() => activeFeature.properties.rotation -= 45), '45°'));
+    instructions.appendChild(createControlButton('rotate-left', layerModificationProxy(() => activeFeature.properties.rotation -= -0.5 * scale.value/100)));
+    instructions.appendChild(createControlButton('arrow-up', layerModificationProxy(() => activeFeature.geometry.coordinates[0] += 10 * wmeSDK.Map.getResolution() * scale.value/100)));
+    instructions.appendChild(createControlButton('rotate-right', layerModificationProxy(() => activeFeature.properties.rotation += 0.5 * scale.value/100)));
+    instructions.appendChild(createControlButton('rotate-right', layerModificationProxy(() => activeFeature.properties.rotation += 45), '45°'));
     instructions.appendChild(document.createElement('br'));
-    instructions.appendChild(createControlButton('arrow-left', () => {
-      layer.shift(-10 * W.map.getResolution() * scale.value/100, 0);
-    }));
-    instructions.appendChild(createControlButton('crosshairs', () => {
-      var layerCenter = layer.extent.getCenterLonLat();
+    instructions.appendChild(createControlButton('arrow-left', layerModificationProxy(() => layer.shift(-10 * W.map.getResolution() * scale.value/100, 0))));
+    instructions.appendChild(createControlButton('crosshairs', layerModificationProxy(() => {
+      const layerCenter = wmeSDK.Map.getMapExtent().getCenterLonLat(); // TODO: probably need to calculate center now
       layer.shift(W.map.getCenter().lon - layerCenter.lon, W.map.getCenter().lat - layerCenter.lat);
-    }));
-    instructions.appendChild(createControlButton('arrow-right', () => {
-      layer.shift(10 * W.map.getResolution() * scale.value/100, 0);
-    }));
+    })));
+    instructions.appendChild(createControlButton('arrow-right', layerModificationProxy(() => layer.shift(10 * W.map.getResolution() * scale.value/100, 0))));
     instructions.appendChild(document.createElement('br'));
-    instructions.appendChild(createControlButton('compress', () => {
-      layer.scale(1 - 0.01 * (numZoomLevels-W.map.getZoom()) * scale.value/100);
-    }));
-    instructions.appendChild(createControlButton('arrow-down', () => {
-      layer.shift(0, -10 * W.map.getResolution() * scale.value/100);
-    }));
-    instructions.appendChild(createControlButton('expand', () => {
-      layer.scale(1 + 0.01 * (numZoomLevels-W.map.getZoom()) * scale.value/100);
-    }));
+    instructions.appendChild(createControlButton('compress', layerModificationProxy(() => layer.scale(1 - 0.01 * (numZoomLevels-W.map.getZoom()) * scale.value/100))));
+    instructions.appendChild(createControlButton('arrow-down', layerModificationProxy(() => layer.shift(0, -10 * W.map.getResolution() * scale.value/100))));
+    instructions.appendChild(createControlButton('expand', layerModificationProxy(() => layer.scale(1 + 0.01 * (numZoomLevels-W.map.getZoom()) * scale.value/100))));
     instructions.appendChild(document.createElement('br'));
     var stretchLabel = document.createElement('span');
     stretchLabel.textContent = I18n.t('image_overlays.stretch_image') + ' ';
@@ -492,23 +469,15 @@ async function onWmeReady() {
     horizontalStretchLabelIcon.className = 'fa fa-arrows-h';
     horizontalStretchLabelIcon.style.marginRight = '10px';
     instructions.appendChild(horizontalStretchLabelIcon);
-    instructions.appendChild(createControlButton('plus', () => {
-      layer.stretch(true, 1 + (0.01 * scale.value/100));
-    }));
-    instructions.appendChild(createControlButton('minus', () => {
-      layer.stretch(true, 1 - (0.01 * scale.value/100));
-    }));
+    instructions.appendChild(createControlButton('plus', layerModificationProxy(() => layer.stretch(true, 1 + (0.01 * scale.value/100)))));
+    instructions.appendChild(createControlButton('minus', layerModificationProxy(() => layer.stretch(true, 1 - (0.01 * scale.value/100)))));
     var verticalStretchLabelIcon = document.createElement('i');
     verticalStretchLabelIcon.style.margin = '15px 10px 15px 20px';
     verticalStretchLabelIcon.className = 'fa fa-arrows-v';
     verticalStretchLabelIcon.style.marginLeft = '10px';
     instructions.appendChild(verticalStretchLabelIcon);
-    instructions.appendChild(createControlButton('plus', () => {
-      layer.stretch(false, 1 + (0.01 * scale.value/100));
-    }));
-    instructions.appendChild(createControlButton('minus', () => {
-      layer.stretch(false, 1 - (0.01 * scale.value/100));
-    }));
+    instructions.appendChild(createControlButton('plus', layerModificationProxy(() => layer.stretch(false, 1 + (0.01 * scale.value/100)))));
+    instructions.appendChild(createControlButton('minus', layerModificationProxy(() => layer.stretch(false, 1 - (0.01 * scale.value/100)))));
     var sensitivityContainer = document.createElement('div');
     sensitivityContainer.className = 'imageoverlays-sensitivity';
     scale.id = 'imageoverlays-control-sensitivity';
@@ -532,14 +501,16 @@ async function onWmeReady() {
     instructions.appendChild(imageNameInput);
   }
 
+  /** Execute provided function, then perform the actions needed to deal with changes to the feature or layer */ 
+  function layerModificationProxy(instructions) {
+    instructions();
+    LAYER.redraw();
+  }
+
   function pinToMap() {
     // TODO: adjust activeFeature instead of creating an object
+    activeFeature.properties.name = imageNameInput.value;
     var obj = {
-      'blob': pinToMapButton.data.blob,
-      'name': imageNameInput.value,
-      'extent': layer.extent.toArray(),
-      'rotation': layer.rotation,
-      'opacity': opacityRange.value / 50,
       'layerTarget': parentLayer.value
     };
     editButtonsContainer.classList.add('hidden');
@@ -589,7 +560,7 @@ async function onWmeReady() {
       let imageExtent = turf.toWgs84(turf.bboxPolygon(overlay.extent));
       let imageBbox = turf.bbox(imageExtent, { recompute: true });
       let featureProperties = {
-        // OpenLayers data
+        // Map data
         url: img.src,
         leftBottom: turf.point(imageBbox.slice(0, 2)),
         rightTop: turf.point(imageBbox.slice(2, 4)),
@@ -601,7 +572,7 @@ async function onWmeReady() {
         opacity: overlay.opacity,
         layerTarget: overlay.layerTarget
       };
-      if (activeFeature.properties.key) {
+      if (activeFeature && activeFeature.properties.key) {
         featureProperties.key = activeFeature.properties.key;
       }
       let feature = turf.point([ (imageBbox[0] + imageBbox[2]) / 2, (imageBbox[1] + imageBbox[3]) / 2 ], featureProperties);
