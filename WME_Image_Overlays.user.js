@@ -408,7 +408,7 @@ async function onWmeReady() {
     aboveRoadsOption.textContent = 'Under Roads';
     aboveRoadsOption.selected = aboveRoadsOption.value == currentLayer;
     parentLayer.appendChild(aboveRoadsOption);
-    W.map.layers.forEach(function(layer) {
+    W.map.getLayers().forEach(function(layer) {
       if (layer.name != 'Image Overlay') {
         var layerOption = document.createElement('option');
         layerOption.value = layer.name;
