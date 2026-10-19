@@ -244,7 +244,7 @@ async function onWmeReady() {
         objectStore.get(activeFeature.properties.key).addEventListener('success', (e) => {
           var data = e.target.result;
           data.opacity = opacityRange.value / 50;
-          objectStore.put(data, layer.key).addEventListener('success', LAYER.redraw);
+          objectStore.put(data, activeFeature.properties.key).addEventListener('success', LAYER.redraw);
         });
       });
     } else {
@@ -355,14 +355,14 @@ async function onWmeReady() {
       nameContainer.textContent = I18n.t('image_overlays.name_missing');
     }
     container.appendChild(nameContainer);
-    var editOverlay = document.createElement('button');
+    let editOverlay = document.createElement('button');
     editOverlay.className = 'fa fa-pencil rename';
     editOverlay.addEventListener('click', (e) => {
       e.stopPropagation();
       getIndexedDB((db) => {
-        var objectStore = db.transaction(['overlays'], 'readwrite').objectStore('overlays');
+        let objectStore = db.transaction(['overlays'], 'readwrite').objectStore('overlays');
         objectStore.get(key).addEventListener('success', (e) => {
-          var data = e.target.result;
+          let data = e.target.result;
           editPanel.classList.remove('hidden');
           overlayControls.classList.add('hidden');
           editButtonsContainer.classList.remove('hidden');
@@ -443,24 +443,48 @@ async function onWmeReady() {
 
     description.textContent = I18n.t('image_overlays.align_image_description');
     var scale = document.createElement('input');
-    let numZoomLevels = W.map.getLayersBy("isBaseLayer", true)[0].numZoomLevels;
     instructions.textContent = '';
     instructions.appendChild(createControlButton('rotate-left', layerModificationProxy(() => activeFeature.properties.rotation -= 45), '45°'));
-    instructions.appendChild(createControlButton('rotate-left', layerModificationProxy(() => activeFeature.properties.rotation -= -0.5 * scale.value/100)));
-    instructions.appendChild(createControlButton('arrow-up', layerModificationProxy(() => activeFeature.geometry.coordinates[0] += 10 * wmeSDK.Map.getResolution() * scale.value/100)));
+    instructions.appendChild(createControlButton('rotate-left', layerModificationProxy(() => activeFeature.properties.rotation -= 0.5 * scale.value/100)));
+    instructions.appendChild(createControlButton('arrow-up', layerModificationProxy(() =>
+      turf.transformTranslate(activeFeature, 10 * wmeSDK.Map.getMapResolution() * scale.value/100, 0, { units: 'meters', mutate: true })
+    )));
     instructions.appendChild(createControlButton('rotate-right', layerModificationProxy(() => activeFeature.properties.rotation += 0.5 * scale.value/100)));
     instructions.appendChild(createControlButton('rotate-right', layerModificationProxy(() => activeFeature.properties.rotation += 45), '45°'));
     instructions.appendChild(document.createElement('br'));
-    instructions.appendChild(createControlButton('arrow-left', layerModificationProxy(() => layer.shift(-10 * W.map.getResolution() * scale.value/100, 0))));
+    instructions.appendChild(createControlButton('arrow-left', layerModificationProxy(() =>
+      turf.transformTranslate(activeFeature, 10 * wmeSDK.Map.getMapResolution() * scale.value/100, 270, { units: 'meters', mutate: true })
+    )));
     instructions.appendChild(createControlButton('crosshairs', layerModificationProxy(() => {
-      const layerCenter = wmeSDK.Map.getMapExtent().getCenterLonLat(); // TODO: probably need to calculate center now
-      layer.shift(W.map.getCenter().lon - layerCenter.lon, W.map.getCenter().lat - layerCenter.lat);
+      const mapCenter = wmeSDK.Map.getLonLatFromMapPixel({ x: wmeSDK.Map.getMapViewportElement().clientWidth / 2, y: wmeSDK.Map.getMapViewportElement().clientHeight / 2 });
+      const deltaX = mapCenter.lon - activeFeature.geometry.coordinates[0];
+      const deltaY = mapCenter.lat - activeFeature.geometry.coordinates[1];
+      let transform = (feature) => { feature.geometry.coordinates = [ feature.geometry.coordinates[0] + deltaX, feature.geometry.coordinates[1] + deltaY ] };
+      transform(activeFeature);
+      transform(activeFeature.properties.leftBottom);
+      transform(activeFeature.properties.rightTop);
     })));
-    instructions.appendChild(createControlButton('arrow-right', layerModificationProxy(() => layer.shift(10 * W.map.getResolution() * scale.value/100, 0))));
+    instructions.appendChild(createControlButton('arrow-right', layerModificationProxy(() =>
+      turf.transformTranslate(activeFeature, 10 * wmeSDK.Map.getMapResolution() * scale.value/100, 90, { units: 'meters', mutate: true })
+    )));
     instructions.appendChild(document.createElement('br'));
-    instructions.appendChild(createControlButton('compress', layerModificationProxy(() => layer.scale(1 - 0.01 * (numZoomLevels-W.map.getZoom()) * scale.value/100))));
-    instructions.appendChild(createControlButton('arrow-down', layerModificationProxy(() => layer.shift(0, -10 * W.map.getResolution() * scale.value/100))));
-    instructions.appendChild(createControlButton('expand', layerModificationProxy(() => layer.scale(1 + 0.01 * (numZoomLevels-W.map.getZoom()) * scale.value/100))));
+    instructions.appendChild(createControlButton('compress', layerModificationProxy(() => {
+      const factor = 0.01 * (wmeSDK.Map.MAX_ZOOM_LEVEL + 1 - wmeSDK.Map.getZoomLevel()) * scale.value/100;
+      const width = activeFeature.properties.rightTop.geometry.coordinates[0] - activeFeature.properties.leftBottom.geometry.coordinates[0];
+      const height = activeFeature.properties.rightTop.geometry.coordinates[1] - activeFeature.properties.leftBottom.geometry.coordinates[1];
+      activeFeature.properties.rightTop.geometry.coordinates = [ activeFeature.properties.rightTop.geometry.coordinates[0] - width * factor, activeFeature.properties.rightTop.geometry.coordinates[1] - height * factor ];
+      activeFeature.properties.leftBottom.geometry.coordinates = [ activeFeature.properties.leftBottom.geometry.coordinates[0] + width * factor, activeFeature.properties.leftBottom.geometry.coordinates[1] + height * factor ];
+    })));
+    instructions.appendChild(createControlButton('arrow-down', layerModificationProxy(() =>
+      turf.transformTranslate(activeFeature, 10 * wmeSDK.Map.getMapResolution() * scale.value/100, 180, { units: 'meters', mutate: true })
+    )));
+    instructions.appendChild(createControlButton('expand', layerModificationProxy(() => {
+      const factor = 0.01 * (wmeSDK.Map.MAX_ZOOM_LEVEL + 1 - wmeSDK.Map.getZoomLevel()) * scale.value/100;
+      const width = activeFeature.properties.rightTop.geometry.coordinates[0] - activeFeature.properties.leftBottom.geometry.coordinates[0];
+      const height = activeFeature.properties.rightTop.geometry.coordinates[1] - activeFeature.properties.leftBottom.geometry.coordinates[1];
+      activeFeature.properties.rightTop.geometry.coordinates = [ activeFeature.properties.rightTop.geometry.coordinates[0] + width * factor, activeFeature.properties.rightTop.geometry.coordinates[1] + height * factor ];
+      activeFeature.properties.leftBottom.geometry.coordinates = [ activeFeature.properties.leftBottom.geometry.coordinates[0] - width * factor, activeFeature.properties.leftBottom.geometry.coordinates[1] - height * factor ];
+    })));
     instructions.appendChild(document.createElement('br'));
     var stretchLabel = document.createElement('span');
     stretchLabel.textContent = I18n.t('image_overlays.stretch_image') + ' ';
@@ -469,15 +493,35 @@ async function onWmeReady() {
     horizontalStretchLabelIcon.className = 'fa fa-arrows-h';
     horizontalStretchLabelIcon.style.marginRight = '10px';
     instructions.appendChild(horizontalStretchLabelIcon);
-    instructions.appendChild(createControlButton('plus', layerModificationProxy(() => layer.stretch(true, 1 + (0.01 * scale.value/100)))));
-    instructions.appendChild(createControlButton('minus', layerModificationProxy(() => layer.stretch(true, 1 - (0.01 * scale.value/100)))));
+    instructions.appendChild(createControlButton('plus', layerModificationProxy(() => {
+      const factor = 0.01 * (wmeSDK.Map.MAX_ZOOM_LEVEL + 1 - wmeSDK.Map.getZoomLevel()) * scale.value/100;
+      const width = activeFeature.properties.rightTop.geometry.coordinates[0] - activeFeature.properties.leftBottom.geometry.coordinates[0];
+      activeFeature.properties.rightTop.geometry.coordinates[0] = activeFeature.properties.rightTop.geometry.coordinates[0] + width * factor;
+      activeFeature.properties.leftBottom.geometry.coordinates[0] = activeFeature.properties.leftBottom.geometry.coordinates[0] - width * factor;
+    })));
+    instructions.appendChild(createControlButton('minus', layerModificationProxy(() => {
+      const factor = 0.01 * (wmeSDK.Map.MAX_ZOOM_LEVEL + 1 - wmeSDK.Map.getZoomLevel()) * scale.value/100;
+      const width = activeFeature.properties.rightTop.geometry.coordinates[0] - activeFeature.properties.leftBottom.geometry.coordinates[0];
+      activeFeature.properties.rightTop.geometry.coordinates[0] = activeFeature.properties.rightTop.geometry.coordinates[0] - width * factor;
+      activeFeature.properties.leftBottom.geometry.coordinates[0] = activeFeature.properties.leftBottom.geometry.coordinates[0] + width * factor;
+    })));
     var verticalStretchLabelIcon = document.createElement('i');
     verticalStretchLabelIcon.style.margin = '15px 10px 15px 20px';
     verticalStretchLabelIcon.className = 'fa fa-arrows-v';
     verticalStretchLabelIcon.style.marginLeft = '10px';
     instructions.appendChild(verticalStretchLabelIcon);
-    instructions.appendChild(createControlButton('plus', layerModificationProxy(() => layer.stretch(false, 1 + (0.01 * scale.value/100)))));
-    instructions.appendChild(createControlButton('minus', layerModificationProxy(() => layer.stretch(false, 1 - (0.01 * scale.value/100)))));
+    instructions.appendChild(createControlButton('plus', layerModificationProxy(() => {
+      const factor = 0.01 * (wmeSDK.Map.MAX_ZOOM_LEVEL + 1 - wmeSDK.Map.getZoomLevel()) * scale.value/100;
+      const height = activeFeature.properties.rightTop.geometry.coordinates[1] - activeFeature.properties.leftBottom.geometry.coordinates[1];
+      activeFeature.properties.rightTop.geometry.coordinates[1] = activeFeature.properties.rightTop.geometry.coordinates[1] + height * factor;
+      activeFeature.properties.leftBottom.geometry.coordinates[1] = activeFeature.properties.leftBottom.geometry.coordinates[1] - height * factor;
+    })));
+    instructions.appendChild(createControlButton('minus', layerModificationProxy(() => {
+      const factor = 0.01 * (wmeSDK.Map.MAX_ZOOM_LEVEL + 1 - wmeSDK.Map.getZoomLevel()) * scale.value/100;
+      const height = activeFeature.properties.rightTop.geometry.coordinates[1] - activeFeature.properties.leftBottom.geometry.coordinates[1];
+      activeFeature.properties.rightTop.geometry.coordinates[1] = activeFeature.properties.rightTop.geometry.coordinates[1] - height * factor;
+      activeFeature.properties.leftBottom.geometry.coordinates[1] = activeFeature.properties.leftBottom.geometry.coordinates[1] + height * factor;
+    })));
     var sensitivityContainer = document.createElement('div');
     sensitivityContainer.className = 'imageoverlays-sensitivity';
     scale.id = 'imageoverlays-control-sensitivity';
@@ -501,14 +545,16 @@ async function onWmeReady() {
     instructions.appendChild(imageNameInput);
   }
 
-  /** Execute provided function, then perform the actions needed to deal with changes to the feature or layer */ 
+  /** Execute provided function, then perform the actions needed to deal with changes to the feature or layer */
   function layerModificationProxy(instructions) {
-    instructions();
-    LAYER.redraw();
+    return () => {
+      instructions();
+      activeFeature.properties.extent = [ activeFeature.properties.leftBottom[0], activeFeature.properties.leftBottom[1], activeFeature.properties.rightTop[0], activeFeature.properties.rightTop[1] ];
+      LAYER.addFeature(activeFeature);
+    };
   }
 
   function pinToMap() {
-    // TODO: adjust activeFeature instead of creating an object
     activeFeature.properties.name = imageNameInput.value;
     var obj = {
       'layerTarget': parentLayer.value
@@ -667,51 +713,6 @@ async function onWmeReady() {
     fileInput.click();
   }
 }
-
-/*
-    shift: function(x, y) {
-      this.extent = this.extent.add(x, y);
-      var ulPx = this.map.getLayerPxFromLonLat({
-        lon: this.extent.left,
-        lat: this.extent.top
-      });
-      this.tile.position = ulPx.clone();
-      this.tile.positionTile();
-    },
-    scale: function(factor) {
-      this.extent = this.extent.scale(factor);
-      this.setTileSize();
-      var ulPx = this.map.getLayerPxFromLonLat({
-        lon: this.extent.left,
-        lat: this.extent.top
-      });
-      this.tile.position = ulPx.clone();
-      this.tile.size = this.tileSize.clone();
-      this.tile.positionTile();
-    },
-    stretch: function(horizontal, factor) {
-      var extent = this.extent.toArray();
-      var distance;
-      if (horizontal) {
-        distance = Math.abs(extent[2] - extent[0]) * (1-factor) / 2;
-        extent[0] += distance;
-        extent[2] -= distance;
-      } else {
-        distance = Math.abs(extent[1] - extent[3]) * (1-factor) / 2;
-        extent[1] += distance;
-        extent[3] -= distance;
-      }
-      this.extent = OpenLayers.Bounds.fromArray(extent);
-      this.setTileSize();
-      var ulPx = this.map.getLayerPxFromLonLat({
-        lon: this.extent.left,
-        lat: this.extent.top
-      });
-      this.tile.position = ulPx.clone();
-      this.tile.size = this.tileSize.clone();
-      this.tile.positionTile();
-    },
-*/
 
 function setTranslations() {
   let translations = {
