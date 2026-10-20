@@ -71,10 +71,10 @@ const LAYER = function() {
     setZIndex: (targetLayer) => {
       let targetIndex = null;
       try {
-        targetIndex = wmeSDK.Map.getLayerZIndex({ layerName: targetLayer }) - 5;
+        targetIndex = wmeSDK.Map.getLayerZIndex({ layerName: targetLayer }) + 5;
       } catch (e) {
-        alert("It would seem that the parent layer '" + targetLayer + "' no longer exists in the WME. Reverting to 'roads'. Please report this at https://www.waze.com/discuss/t/script-wme-image-overlays-1-5-4/129015");
-        targetIndex = wmeSDK.Map.getLayerZIndex({ layerName: "roads" }) - 5;
+        alert("It would seem that the parent layer '" + targetLayer + "' no longer exists in the WME. Reverting to ''. Please report this at https://www.waze.com/discuss/t/script-wme-image-overlays-1-5-4/129015");
+        targetIndex = wmeSDK.Map.getLayerZIndex({ layerName: "satelite_imagery" }) + 5;
       }
       wmeSDK.Map.setLayerZIndex({ layerName: LAYER_NAME, zIndex: targetIndex });
     }
@@ -271,17 +271,9 @@ async function onWmeReady() {
   parentLayer.add(new Option("Permanent Hazards", "permanent_hazard_camera_markers"));
   parentLayer.add(new Option("Closures", "closures"));
   parentLayer.addEventListener('change', () => {
-    if (!activeFeature) { return; }
-    activeFeature.properties.layerTarget = parentLayer.value;
     if (activeFeature.properties.key) {
-      getIndexedDB((db) => {
-        var objectStore = db.transaction(['overlays'], 'readwrite').objectStore('overlays');
-        objectStore.get(activeFeature.properties.key).addEventListener('success', (e) => {
-          var data = e.target.result;
-          data.layerTarget = parentLayer.value;
-          objectStore.put(data, activeFeature.properties.key).addEventListener('success', () => LAYER.setZIndex(parentLayer.value));
-        });
-      });
+      activeFeature.properties.layerTarget = parentLayer.value;
+      storeOverlay(createStorageObjectFromActiveFeature(), (e) => LAYER.setZIndex(parentLayer.value));
     } else {
       LAYER.setZIndex(parentLayer.value);
     }
@@ -345,6 +337,7 @@ async function onWmeReady() {
     if (selected) {
       overlayHandle.style.fontWeight = '700';
     }
+    overlayHandle.dataset.key = key;
     var container = document.createElement('div');
     container.className = 'image-overlay-handle';
     var nameContainer = document.createElement('div');
@@ -445,11 +438,12 @@ async function onWmeReady() {
     var scale = document.createElement('input');
     instructions.textContent = '';
     instructions.appendChild(createControlButton('rotate-left', layerModificationProxy(() => activeFeature.properties.rotation -= 45), '45°'));
-    instructions.appendChild(createControlButton('rotate-left', layerModificationProxy(() => activeFeature.properties.rotation -= 0.5 * scale.value/100)));
+    // Math.max with 1 needed as the WME SDK only allows integer movements, not an actual restriction by SVG
+    instructions.appendChild(createControlButton('rotate-left', layerModificationProxy(() => activeFeature.properties.rotation -= Math.max(1, 0.5 * scale.value/100))));
     instructions.appendChild(createControlButton('arrow-up', layerModificationProxy(() =>
       turf.transformTranslate(activeFeature, 10 * wmeSDK.Map.getMapResolution() * scale.value/100, 0, { units: 'meters', mutate: true })
     )));
-    instructions.appendChild(createControlButton('rotate-right', layerModificationProxy(() => activeFeature.properties.rotation += 0.5 * scale.value/100)));
+    instructions.appendChild(createControlButton('rotate-right', layerModificationProxy(() => activeFeature.properties.rotation += Math.max(1, 0.5 * scale.value/100))));
     instructions.appendChild(createControlButton('rotate-right', layerModificationProxy(() => activeFeature.properties.rotation += 45), '45°'));
     instructions.appendChild(document.createElement('br'));
     instructions.appendChild(createControlButton('arrow-left', layerModificationProxy(() =>
@@ -560,7 +554,7 @@ async function onWmeReady() {
       'layerTarget': parentLayer.value
     };
     editButtonsContainer.classList.add('hidden');
-    storeActiveOverlay((e) => {
+    storeOverlay(createStorageObjectFromActiveFeature(), (e) => {
       editPanel.classList.add('hidden');
       exportButton.classList.remove('hidden');
       overlayControls.classList.remove('hidden');
@@ -574,21 +568,6 @@ async function onWmeReady() {
     });
   }
 
-  function storeActiveOverlay(callback) {
-    const overlay = createStorageObjectFromActiveFeature();
-    let updateActiveFeature = (e) => {
-      activeFeature.properties.key = e.target.result;
-      callback(e);
-    };
-    getIndexedDB((db) => {
-      if (activeFeature.properties.key) {
-        db.transaction(['overlays'], 'readwrite').objectStore('overlays').put(overlay, activeFeature.properties.key).addEventListener('success', callback);
-      } else {
-        db.transaction(['overlays'], 'readwrite').objectStore('overlays').add(overlay).addEventListener('success', updateActiveFeature);
-      }
-    });
-  }
-
   function createStorageObjectFromActiveFeature() {
     return {
       'blob': activeFeature.properties.blob,
@@ -598,6 +577,16 @@ async function onWmeReady() {
       'opacity': activeFeature.properties.opacity,
       'layerTarget': activeFeature.properties.layerTarget
     };
+  }
+
+  function storeOverlay(overlay, callback) {
+    getIndexedDB((db) => {
+      if (activeFeature?.properties?.key) {
+        db.transaction(['overlays'], 'readwrite').objectStore('overlays').put(overlay, activeFeature.properties.key).addEventListener('success', callback);
+      } else {
+        db.transaction(['overlays'], 'readwrite').objectStore('overlays').add(overlay).addEventListener('success', callback);
+      }
+    });
   }
 
   function displayImageOverlay(overlay) {
@@ -629,6 +618,7 @@ async function onWmeReady() {
         for (var i = 0; i < imagesList.childNodes.length; i++) {
           imagesList.childNodes[i].style.fontWeight = (imagesList.childNodes[i].dataset.key == overlay.key ? '700' : '');
         }
+        activeFeature.properties.key = overlay.key;
         layerControls.classList.remove('hidden');
         hideOverlayButton.classList.remove('hidden');
         importButton.classList.add('hidden');
@@ -701,7 +691,7 @@ async function onWmeReady() {
           }
           result.blob = new File([ arrayBuffer ], result.name, { type: mimeType });
         }
-        storeActiveOverlay(result, (e) => {
+        storeOverlay(result, (e) => {
           result.key = e.target.result;
           addImageOverlay(result.name, e.target.result, true);
           displayImageOverlay(result);
